@@ -14,6 +14,7 @@ public class DisplayWindow {
     JFrame main_frame;
     JPanel main_panel;
     String timer = "00";
+    JLabel[] label_array;
     BufferedImage[] image_array;
     Graphics[] graphics_array;
 
@@ -47,7 +48,6 @@ public class DisplayWindow {
     }
 
     private void LoadTestImage(){
-
     }
 
     public void ForceFront(){
@@ -69,6 +69,7 @@ public class DisplayWindow {
             temp = Integer.toString(current);
         }
         timer = temp;
+        label_array[0].setText(timer);
         main_frame.repaint();
     }
 }

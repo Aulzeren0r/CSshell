@@ -51,6 +51,7 @@ public class TopLevelRewrite {
                 new_window.StartWindow();
             }
         });
+        TimerThread t = new TimerThread(40, new_window.screen);
         new_window.screen.SetVis();
         new_window.screen.ForceFront();
 
@@ -173,11 +174,6 @@ public class TopLevelRewrite {
     }
 
     public void NewTeam(){
-        //TODO Finish NewTeam Window
-        /* Layout
-         * Finish ExtendedListener handler
-         * Build Window 2 (role selection)
-         */
         ClearWindow();
         JLabel blank_label = new JLabel("");
         JLabel blank_label_2 = new JLabel("");
@@ -254,11 +250,6 @@ public class TopLevelRewrite {
     }
 
     public void UpdateTeam(){
-        //TODO Build UpdateTeam Window
-        /* Team Selection
-         * Summon NewTeam then insert data or build from scratch?
-         * Finish ExtendedListener handler
-         */
         ClearWindow();
         main_panel.setLayout(new GridBagLayout());
         GridBagConstraints c;
@@ -750,26 +741,34 @@ public class TopLevelRewrite {
         main_panel.add(button_array[0], c);
         RefreshWindow();
     }
-    //TODO File I/O
-    /* File Write
-     * File Read
-     * File Tree Browsing? (BELLS AND WHISTLES)
-     */
-    //TODO Champ Info
-    /* Champ Struct
-     * Searchbars for Champ Select? (BELLS AND WHISTLES)
-     */
+
     //TODO Info Storage
     /* Clean up structs
      * Struct read/write/storage
      */
+
     //TODO Display Info
-    /* Multithreading? (Research)
-     * Second Window... Build into TLR or create new?
+    /* Second Window... Build into TLR or create new?
      * Build visuals
      */
-    //TODO Image Handling
-    /* Image types?
-     * Need special handler or can use built-ins?
+
+    //TODO Champ portraits
+    /* Pull from ddragon
+     * Determine crop points
+     * Champion orientation
+     */
+
+    //TODO Art builder
+    /* Write onto Green Screen
+     * Graphics objects and bufferedimage items
+     * Slanted Rectangles? Masks? Layering?
+     */
+
+    //TODO art assets
+    /* Get from serafina */
+
+    //TODO stat window
+    /* art from Serafina
+     * Interface -- build into TLR
      */
 }
