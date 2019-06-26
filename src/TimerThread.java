@@ -5,8 +5,8 @@
 public class TimerThread implements Runnable {
     private boolean exit;
     private int timer_length;
-    DisplayWindow target;
-    Thread t;
+    private DisplayWindow target;
+    private Thread t;
     public TimerThread(int time, DisplayWindow target_wind){
         exit = false;
         target = target_wind;
