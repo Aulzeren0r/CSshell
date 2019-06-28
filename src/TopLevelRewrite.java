@@ -29,6 +29,7 @@ public class TopLevelRewrite {
     DataHandler data;
     StringSearchable s;
     DisplayWindow screen;
+    StatsInterface si;
     int page_flag;
     int loading_flag;
     int champ_sel_flag;
@@ -44,6 +45,7 @@ public class TopLevelRewrite {
         new_window.loading_flag = 0;
         new_window.champ_sel_flag = 0;
         new_window.screen = new DisplayWindow(new_window, new_window.data);
+        new_window.si = new StatsInterface(new_window.screen);
         new_window.InitMenus();
         new_window.PopulateLander();
         javax.swing.SwingUtilities.invokeLater(new Runnable(){
@@ -304,11 +306,6 @@ public class TopLevelRewrite {
     }
 
     public void DeleteTeam(){
-        //TODO Build DeleteTeamWindow
-        /* Team Selection
-         * Confirmation message
-         * Multiple deletions (BELLS AND WHISTLES)
-         */
         ClearWindow();
         Insets default_inset = new Insets(5, 10, 5, 10);
         main_panel.setLayout(new GridBagLayout());
@@ -742,14 +739,8 @@ public class TopLevelRewrite {
         RefreshWindow();
     }
 
-    //TODO Info Storage
-    /* Clean up structs
-     * Struct read/write/storage
-     */
-
     //TODO Display Info
-    /* Second Window... Build into TLR or create new?
-     * Build visuals
+    /* Build visuals
      */
 
     //TODO Champ portraits
