@@ -17,6 +17,7 @@ public class DisplayWindow {
     JLabel[] label_array;
     BufferedImage[] image_array;
     Graphics[] graphics_array;
+    TimerThread t_thread;
 
     private static final int BLUE = 0;
     private static final int RED = 1;
@@ -44,9 +45,13 @@ public class DisplayWindow {
         }
         else{
             main_frame.setVisible(false);
+            t_thread.Stop();
         }
     }
 
+    public void SetThread(TimerThread t){
+        t_thread = t;
+    }
     private void LoadTestImage(){
     }
 

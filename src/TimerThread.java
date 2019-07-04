@@ -4,6 +4,7 @@
 
 public class TimerThread implements Runnable {
     private boolean exit;
+    private boolean trigger;
     private int timer_length;
     private DisplayWindow target;
     private Thread t;
@@ -11,12 +12,16 @@ public class TimerThread implements Runnable {
         exit = false;
         target = target_wind;
         timer_length = time;
+        trigger = false;
         t = new Thread(this, "TimerThread");
         t.start();
 
     }
     @Override
     public void run() {
+        while(!trigger){
+
+        }
         int count = timer_length;
         while(!exit && count > 0){
             target.SetTimer(count);
@@ -32,5 +37,8 @@ public class TimerThread implements Runnable {
 
     public void Stop(){
         exit = true;
+    }
+    public void Trigger() {
+        trigger = true;
     }
 }

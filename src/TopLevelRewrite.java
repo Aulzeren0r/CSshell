@@ -34,6 +34,24 @@ public class TopLevelRewrite {
     int loading_flag;
     int champ_sel_flag;
     
+    public TopLevelRewrite(){
+        main_frame = new JFrame();
+        main_frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        WindowListener InternalListener = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                DataWrite();
+                io.CloseThreads();
+                main_frame.dispose();
+                System.exit(0);
+            }
+        };
+        main_frame.addWindowListener(InternalListener);
+        main_panel = main_frame.getContentPane();
+        main_panel.setLayout(new GridBagLayout());
+        page_flag = 0;
+    }
+
     public static void main(String[] args) throws IOException {
         TopLevelRewrite new_window = new TopLevelRewrite();
         new_window.io = new IO(new_window);
@@ -54,30 +72,9 @@ public class TopLevelRewrite {
             }
         });
         TimerThread t = new TimerThread(40, new_window.screen);
-        new_window.screen.SetVis();
-        new_window.screen.ForceFront();
+        new_window.screen.SetThread(t);
 
     }
-
-    public TopLevelRewrite(){
-        main_frame = new JFrame();
-        main_frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        WindowListener InternalListener = new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                DataWrite();
-                io.CloseThreads();
-                main_frame.dispose();
-                System.exit(0);
-            }
-        };
-        main_frame.addWindowListener(InternalListener);
-        main_panel = main_frame.getContentPane();
-        main_panel.setLayout(new GridBagLayout());
-        page_flag = 0;
-    }
-
-
 
     public void PopulateLander(){
         ClearWindow();
@@ -149,6 +146,34 @@ public class TopLevelRewrite {
 
         temp_item = new JMenuItem("Force-Close Display");
         temp_item.setActionCommand("force_display_quit");
+        temp_item.addActionListener(handler);
+        temp_menu.add(temp_item);
+
+        build_bar.add(temp_menu);
+        temp_menu = new JMenu("Stats Window");
+
+        temp_item = new JMenuItem("Player Stat");
+        temp_item.setActionCommand("stat_player");
+        temp_item.addActionListener(handler);
+        temp_menu.add(temp_item);
+
+        temp_item = new JMenuItem("Champion Stat");
+        temp_item.setActionCommand("stat_champ");
+        temp_item.addActionListener(handler);
+        temp_menu.add(temp_item);
+
+        temp_item = new JMenuItem("Lane History Stat");
+        temp_item.setActionCommand("stat_lane");
+        temp_item.addActionListener(handler);
+        temp_menu.add(temp_item);
+
+        temp_item = new JMenuItem("Matchup Stat");
+        temp_item.setActionCommand("stat_matchup");
+        temp_item.addActionListener(handler);
+        temp_menu.add(temp_item);
+
+        temp_item = new JMenuItem("Jungler Stat");
+        temp_item.setActionCommand("jg_matchup");
         temp_item.addActionListener(handler);
         temp_menu.add(temp_item);
 
@@ -736,6 +761,56 @@ public class TopLevelRewrite {
         c = CNC(4, 7, 2, 1, GridBagConstraints.NONE, 10, 10,
                 GridBagConstraints.CENTER, new Insets(5, 10, 5, 10));
         main_panel.add(button_array[0], c);
+        RefreshWindow();
+    }
+
+    public void StatPlayerPickPage() {
+        ClearWindow();
+        main_panel.setLayout(new GridBagLayout());
+        checkbox_array = new JCheckBox[6];
+        label_array = new JLabel[2];
+        button_array = new JButton[1];
+        GridBagConstraints c = new GridBagConstraints();
+        Insets d_inset = new Insets(5, 10, 5, 10);
+
+        label_array[0] = new JLabel("Solo Player Stats");
+        label_array[1] = new JLabel("Select up to 3 stats to display:");
+
+        checkbox_array[0] = new JCheckBox("CS/Min");
+        checkbox_array[1] = new JCheckBox("KDA");
+        checkbox_array[2] = new JCheckBox("Lane Win Rate");
+        checkbox_array[3] = new JCheckBox("CS/D at 15");
+        checkbox_array[4] = new JCheckBox("Lane Extension");
+        checkbox_array[5] = new JCheckBox("Jungle Proximity");
+
+        button_array[0] = new JButton("Create Stat Window");
+
+        c = CNC(0, 0, 1, 2, GridBagConstraints.NONE, 5, 5, GridBagConstraints.CENTER,
+                d_inset);
+
+        main_panel.add(label_array[0], c);
+        c
+        main_panel.add(label_array[1], c);
+
+       /* c = CNC(0, 2, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
+                d_inset);
+        main_panel.add(checkbox_array[0]);
+        c.gridx++;
+        main_panel.add(checkbox_array[1]);
+        c.gridx++;
+        main_panel.add(checkbox_array[2]);
+
+        c = CNC(1, 2, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.EAST, d_inset);
+        main_panel.add(checkbox_array[3]);
+        c.gridx++;
+        main_panel.add(checkbox_array[4]);
+        c.gridx++;
+        main_panel.add(checkbox_array[5]);
+
+        c.gridx++;
+        c.anchor = GridBagConstraints.CENTER;
+        main_panel.add(button_array[0]);
+*/
         RefreshWindow();
     }
 

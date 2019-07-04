@@ -40,4 +40,12 @@ public class SI {
     static final int CJ_DRAG_CONT = 64;
     static final int CJ_BARON_CONT = 65;
     static final int CJ_ENEMY_CAMP_STEAL = 66;
+
+    static final int COMP_LANE = 70;
+    static final int COMP_CS = 71;
+    static final int COMP_KDA = 72;
+    static final int COMP_WINRATE = 73;
+    static final int COMP_CSD = 74;
+    static final int COMP_EXTENSION = 75;
+    static final int COMPJUNG_PROX = 76;
 }

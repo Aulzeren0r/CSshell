@@ -149,6 +149,9 @@ public class ExtendedListener implements ActionListener {
         else if(e.getActionCommand().equals("force_display_hide")){
             main_window.screen.SetVis();
         }
+        else if(e.getActionCommand().equals("stat_player")){
+            main_window.StatPlayerPickPage();
+        }
 
     }
 
