@@ -151,6 +151,17 @@ public class ExtendedListener implements ActionListener {
         }
         else if(e.getActionCommand().equals("stat_player")){
             main_window.StatPlayerPickPage();
+            main_window.si.SetStatType(SI.PLAYER);
+        }
+        else if(e.getActionCommand().equals("player_submit")){
+            int sel = 0;
+            int[] array = {0,0,0,0,0};
+            for(int i = 0; i < main_window.checkbox_array.length; i++){
+                if(main_window.checkbox_array[i].isSelected()){
+                    array[sel] = i + 11;
+                    sel++;
+                }
+            }
         }
 
     }

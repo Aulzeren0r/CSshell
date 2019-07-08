@@ -770,7 +770,7 @@ public class TopLevelRewrite {
         checkbox_array = new JCheckBox[6];
         label_array = new JLabel[2];
         button_array = new JButton[1];
-        GridBagConstraints c = new GridBagConstraints();
+        GridBagConstraints c;
         Insets d_inset = new Insets(5, 10, 5, 10);
 
         label_array[0] = new JLabel("Solo Player Stats");
@@ -784,33 +784,35 @@ public class TopLevelRewrite {
         checkbox_array[5] = new JCheckBox("Jungle Proximity");
 
         button_array[0] = new JButton("Create Stat Window");
+        button_array[0].setActionCommand("player_submit");
+        button_array[0].addActionListener(handler);
 
-        c = CNC(0, 0, 1, 2, GridBagConstraints.NONE, 5, 5, GridBagConstraints.CENTER,
+        c = CNC(0, 0, 2, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.CENTER,
                 d_inset);
 
         main_panel.add(label_array[0], c);
-        c
+        c = CNC(0, 1, 2,1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.CENTER,
+                d_inset);
         main_panel.add(label_array[1], c);
 
-       /* c = CNC(0, 2, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
+        c = CNC(0, 2, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
                 d_inset);
-        main_panel.add(checkbox_array[0]);
-        c.gridx++;
-        main_panel.add(checkbox_array[1]);
-        c.gridx++;
-        main_panel.add(checkbox_array[2]);
+        main_panel.add(checkbox_array[0], c);
+        c.gridy++;
+        main_panel.add(checkbox_array[1], c);
+        c.gridy++;
+        main_panel.add(checkbox_array[2], c);
 
-        c = CNC(1, 2, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.EAST, d_inset);
-        main_panel.add(checkbox_array[3]);
-        c.gridx++;
-        main_panel.add(checkbox_array[4]);
-        c.gridx++;
-        main_panel.add(checkbox_array[5]);
+        c = CNC(1, 2, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST, d_inset);
+        main_panel.add(checkbox_array[3], c);
+        c.gridy++;
+        main_panel.add(checkbox_array[4], c);
+        c.gridy++;
+        main_panel.add(checkbox_array[5], c);
 
-        c.gridx++;
+        c.gridy++;
         c.anchor = GridBagConstraints.CENTER;
-        main_panel.add(button_array[0]);
-*/
+        main_panel.add(button_array[0], c);
         RefreshWindow();
     }
 

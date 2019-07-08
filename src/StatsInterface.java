@@ -1,7 +1,7 @@
 public class StatsInterface implements Runnable {
-    StatBuilder sb;
-    int stat_type;
-    int[] sub_type;
+    private StatBuilder sb;
+    private int stat_type;
+    private int[] sub_type;
     private boolean release;
 
     public StatsInterface(DisplayWindow dw){
@@ -64,5 +64,11 @@ public class StatsInterface implements Runnable {
                 break;
         }
     }
+    public void SetStatType(int i){
+        stat_type = i;
+    }
 
+    public void SetSubTypeArray(int[] array){
+        sub_type = array;
+    }
 }
