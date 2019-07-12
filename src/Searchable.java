@@ -12,6 +12,7 @@ import java.util.Collection;
 */
 
 public interface Searchable<E, V>{
+    //Borrowed class.
 
 
 

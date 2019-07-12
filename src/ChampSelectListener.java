@@ -5,11 +5,16 @@ import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
 public class ChampSelectListener implements ActionListener {
+    /* Special ActionListener exclusively for ChampSelectPickBan() and ChampSelectSwaps().
+     * Built separately from ExtendedListener because the code required for champ select functionality
+     * is bulky and long, which would make ExtendedListener harder than it already is to understand on read.
+     */
     TopLevelRewrite window;
     private static final int BLUE = 1;
     private static final int RED = 2;
     public void actionPerformed(ActionEvent e){
         if(e.getActionCommand().equals("champ_select_continue")) {
+            // Action command for submitting a pick or ban. Stores the data and advances to the next selection.
             String curr_sel = null;
             if (EditCheck()) {
                 curr_sel = (String) window.auto_array[0].getSelectedItem();
@@ -147,6 +152,7 @@ public class ChampSelectListener implements ActionListener {
             window.champ_sel_flag++;
         }
         else if(e.getActionCommand().equals("champ_select_swap")){
+            //Action command for swap submission. Updates champion placements as needed.
             int[] blue_count = new int[5];
             int[] red_count = new int[5];
             for(int i = 0; i < 5; i++){
@@ -211,6 +217,10 @@ public class ChampSelectListener implements ActionListener {
     }
 
     private void EditFlip() {
+        /* Changes which AutoComplete box is currently editable.
+         * Timeout implemented to allow AutocompleteJComboBox to properly update because its implementation breaks
+         * if the setEditable at the end is altered.
+         */
         try {
             if (window.auto_array[0].isEditable()) {
                 TimeUnit.MILLISECONDS.sleep(100);
@@ -229,6 +239,7 @@ public class ChampSelectListener implements ActionListener {
     }
 
     private boolean EditCheck(){
+        //Checks if blue side is currently editable.
         if(window.auto_array[0].isEditable()){
             return true;
         }

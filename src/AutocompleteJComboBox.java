@@ -15,6 +15,10 @@ import java.awt.event.*;
  *
 
  */
+/* Borrowed for searchable champ selection and updated to allow StringSearchables to be updated.
+ * In this case, the StringSearchable is updated to no longer contain the champions already selected in the current
+ * draft.
+ */
 
 public class AutocompleteJComboBox extends JComboBox {
 

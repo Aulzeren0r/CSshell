@@ -5,6 +5,7 @@
 import java.awt.image.BufferedImage;
 
 public class PlacedImage {
+    // Currently unused. Will be used in DrawData when implementation there is properly dealt with.
     BufferedImage img;
     int xloc;
     int yloc;

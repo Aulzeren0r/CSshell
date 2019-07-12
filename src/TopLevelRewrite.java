@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.List;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -12,7 +15,17 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
+/* This is the main class of the program, and the one which houses the main interface for controlling.
+ * At no point during execution of the program should this class be completely inactive.
+ * In comments, this class will be abbreviated as TLR.
+ */
+
 public class TopLevelRewrite {
+    /* An assortment of variables internal to TLR and some which refer to instances of other classes.
+     * Some class references are mirrored in other classes, based on whether it was worth the effort of
+     * passing it in to save on typing references to classes through the TLR instance.
+     * All classes will have their functionality explained in their own header in their source code.
+     */
     JFrame main_frame;
     Container main_panel;
     JTextField[] text_field_array;
@@ -35,6 +48,16 @@ public class TopLevelRewrite {
     int champ_sel_flag;
     
     public TopLevelRewrite(){
+        /* Building the frame for the main user interface. The standard window close event is overwritten here
+         * in order to always ensure data is written to permanent memory prior to end of execution.
+         *
+         * In all frames in this project, GridBagLayout is used for its versatility and organization.
+         * Furthermore, the JFrame library and its components are made extensive use of. Most of these components
+         * are fairly self-explanatory (JButtons are buttons, JLabels are static text, etc.), so they will not be
+         * explained except in extenuating circumstances.
+         * All JFrame components are stored in the various arrays of TLR so that outside classes can access, read
+         * and modify their values.
+         */
         main_frame = new JFrame();
         main_frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         WindowListener InternalListener = new WindowAdapter() {
@@ -49,10 +72,19 @@ public class TopLevelRewrite {
         main_frame.addWindowListener(InternalListener);
         main_panel = main_frame.getContentPane();
         main_panel.setLayout(new GridBagLayout());
-        page_flag = 0;
     }
 
     public static void main(String[] args) throws IOException {
+        /* The execution header for the program. Before any other functions are called, the program retrieves the
+         * current version of DDragon, Riot's static data storage locale. This is because start-up functionality for
+         * champion data requires their champion ID, which is pulled from DDragon in order to future-proof against
+         * ID changes.
+         *
+         * The rest of main() consists of initializing the various classes required by TLR and running various
+         * other subroutines to pull saved data and clean out memory (technically unnecessary, but a habit from
+         * writing in C). As with classes, the subroutines will be explained at their declaration.
+         */
+        RiotAPICall.GetCurrentVersion();
         TopLevelRewrite new_window = new TopLevelRewrite();
         new_window.io = new IO(new_window);
         new_window.data = new DataHandler(new_window);
@@ -62,6 +94,7 @@ public class TopLevelRewrite {
         new_window.champ_handler = new ChampSelectListener(new_window);
         new_window.loading_flag = 0;
         new_window.champ_sel_flag = 0;
+        new_window.page_flag = 0;
         new_window.screen = new DisplayWindow(new_window, new_window.data);
         new_window.si = new StatsInterface(new_window.screen);
         new_window.InitMenus();
@@ -71,12 +104,13 @@ public class TopLevelRewrite {
                 new_window.StartWindow();
             }
         });
-        TimerThread t = new TimerThread(40, new_window.screen);
-        new_window.screen.SetThread(t);
-
+        RiotAPICall.SetKey(new_window.GetAPIKey());
     }
 
     public void PopulateLander(){
+        /* This creates the landing screen for the program. After any action is complete or cancelled, the
+         * program returns here.
+         */
         ClearWindow();
         main_panel.repaint();
         JLabel main_label = new JLabel("Welcome to the Champ Select Overlay / Display Application!");
@@ -103,6 +137,10 @@ public class TopLevelRewrite {
     }
 
     private void InitMenus(){
+        /* Function to build the menu bar for TLR's frame. All of these options link to handler, an instance of
+         * ExtendedListener which handles most user interaction. The origin and destination of each call will be
+         * documented there.
+         */
         JMenuBar build_bar = new JMenuBar();
         JMenu temp_menu = new JMenu("Teams");
 
@@ -152,37 +190,15 @@ public class TopLevelRewrite {
         build_bar.add(temp_menu);
         temp_menu = new JMenu("Stats Window");
 
-        temp_item = new JMenuItem("Player Stat");
-        temp_item.setActionCommand("stat_player");
-        temp_item.addActionListener(handler);
-        temp_menu.add(temp_item);
-
-        temp_item = new JMenuItem("Champion Stat");
-        temp_item.setActionCommand("stat_champ");
-        temp_item.addActionListener(handler);
-        temp_menu.add(temp_item);
-
-        temp_item = new JMenuItem("Lane History Stat");
-        temp_item.setActionCommand("stat_lane");
-        temp_item.addActionListener(handler);
-        temp_menu.add(temp_item);
-
-        temp_item = new JMenuItem("Matchup Stat");
-        temp_item.setActionCommand("stat_matchup");
-        temp_item.addActionListener(handler);
-        temp_menu.add(temp_item);
-
-        temp_item = new JMenuItem("Jungler Stat");
-        temp_item.setActionCommand("jg_matchup");
-        temp_item.addActionListener(handler);
-        temp_menu.add(temp_item);
-
         build_bar.add(temp_menu);
         main_frame.setJMenuBar(build_bar);
     }
 
     private GridBagConstraints CNC(int xloc, int yloc, int xsize, int ysize, int fill, int intpadx,
                                                            int intpady, int anchor, Insets inset){
+        /* An ease-of-use program to make building GridBagConstraints less space-consuming. Takes inputs for
+         * each of the variables in a GBC, and properly assigns them. Returns a fully-built GBC.
+         */
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = xloc;
         c.gridy = yloc;
@@ -197,10 +213,14 @@ public class TopLevelRewrite {
     }
 
     private void StartWindow(){
+        //Declared here for each of comprehension in main().
         main_frame.setVisible(true);
     }
 
     public void NewTeam(){
+        /* The team creation interface. This particular window contains input space for team name, team abbreviation,
+         * and up to 7 team members.
+         */
         ClearWindow();
         JLabel blank_label = new JLabel("");
         JLabel blank_label_2 = new JLabel("");
@@ -277,6 +297,11 @@ public class TopLevelRewrite {
     }
 
     public void UpdateTeam(){
+        /* The team edit interface. Offers up to 10 teams from memory to choose from, with teams unable to be shown
+         * offered on subsequent pages. Page number is stored in the page_flag TLR variable, 0-indexed.
+         * Upon selection of a team, UpdateTeam()'s handler calls NewTeam() and fills it in with the stored
+         * data from that team.
+         */
         ClearWindow();
         main_panel.setLayout(new GridBagLayout());
         GridBagConstraints c;
@@ -381,18 +406,30 @@ public class TopLevelRewrite {
     }
 
     private void RefreshWindow(){
+        /* A helper function called at the end of all interface-building functions. It resizes, redraws and
+         * re-centers the interface window.
+         */
         main_frame.pack();
         main_panel.repaint();
         main_frame.setLocationRelativeTo(null);
     }
 
     private void ClearWindow(){
+        /* A helper function called at the beginning of all interface-building functions. It empties the TLR JFrame
+         * component arrays to free memory for garbage collection, removes all items from the interface window,
+         * and resets the layout to a clean GridBagLayout for the new interface.
+         */
         ClearArrays();
         main_panel.removeAll();
         main_panel.setLayout(new GridBagLayout());
     }
 
     public void NewTeamPageTwo(){
+        /* The second window of the new team functionality. This window allows selection of which roles each player
+         * entered on the previous screen is capable of filling, as well as selection of which role they currently
+         * fill. The handler ensures that a user cannot advance past this window without choosing a player for all 5
+         * standard roles.
+         */
         main_panel.removeAll();
         label_array = new JLabel[1 + (2 * active_edit_team.roster.length)];
         checkbox_array = new JCheckBox[5 * active_edit_team.roster.length];
@@ -465,6 +502,7 @@ public class TopLevelRewrite {
     }
 
     private void ClearArrays(){
+        // A helper function for ClearWindow() to enable automatic garbage collection for old JFrame components.
         label_array = null;
         button_array = null;
         text_field_array = null;
@@ -474,6 +512,11 @@ public class TopLevelRewrite {
     }
 
     private void DataWrite(){
+        /* An end-of-runtime function which takes all active-memory data concerning teams and champions and sends it
+         * to inter-execution storage. Because of access rights, it is not recommended to run multiple instances of
+         * this program at the same time for data integrity.
+         * All data is stored in (root)/data, as .txt files.
+         */
         for(int i = 0; i < data.team_array.length; i++){
             String[] temp = data.team_array[i].Stringify();
             try {
@@ -481,6 +524,13 @@ public class TopLevelRewrite {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        String[] games_tot = {Integer.toString(data.total_games)};
+        try {
+            io.PushStrings(games_tot, IO.CHAMP);
+        }
+        catch (IOException e){
+            e.printStackTrace();
         }
         for(int i = 0; i < data.champ_array.length; i++){
             String[] temp = data.champ_array[i].Stringify();
@@ -494,6 +544,10 @@ public class TopLevelRewrite {
     }
 
     private void RunStartUp(){
+        /* A helper function to read previously-stored data. If data is corrupt, the program closes with exit code
+         * -2. This should never happen as the IO class has protections in place, but the safeguard is here
+         * nonetheless.
+         */
         try {
             io.ReadTeamData();
             io.ReadChampData();
@@ -507,6 +561,9 @@ public class TopLevelRewrite {
     }
 
     public void ChampSelect(){
+        /* The precursor to the champ select pick/ban window. This interface allows the operator to select the two
+         * teams which will be competing in the draft to follow.
+         */
         ClearWindow();
         main_panel.setLayout(new GridBagLayout());
         label_array = new JLabel[3];
@@ -553,11 +610,17 @@ public class TopLevelRewrite {
     }
 
     public void ChampSelectPickBan(){
+        /* The heart of the champ select functionality (and the original intention) of this program. This interface
+         * allows the operator to select champions for each portion of the pick/ban cycle. Previous selections are
+         * displayed in plain text in the interface, and each selection updates TLR's child DisplayWindow (screen)
+         * with the proper graphics.
+         */
         champ_sel_flag = 0;
         List<String> champ_names = new ArrayList<String>();
         for(int i = 0; i < data.champ_array.length; i++){
             champ_names.add(data.champ_array[i].name);
         }
+        //StringSearchable is the base for a custom JFrame component, explained in detail in its class declaration.
         s = new StringSearchable(champ_names);
         /*label_array assignments
          *0 -> Current Ban/Pick
@@ -644,6 +707,7 @@ public class TopLevelRewrite {
         label_array[37] = new JLabel(data.red_team.team_name);
 
         for(int i = 0; i < 2; i++){
+            //AutocompleteJComboBox is the custom JFrame component, explained properly in its declaration.
             auto_array[i] = new AutocompleteJComboBox(s);
         }
 
@@ -722,10 +786,15 @@ public class TopLevelRewrite {
     }
 
     public void PublicRefresh(){
+        //A public wrapper for refreshing TLR's main frame.
         RefreshWindow();
     }
 
     public void ChampSelectSwaps(){
+        /* Interface for the operator to reassign champs to their proper player after the draft phase has ended.
+         * Due to limits on the JFrame components, this is done by selecting new locations and pressing submit,
+         * but may be done multiple times while the post-draft timer ticks.
+         */
         main_panel.remove(auto_array[0]);
         main_panel.remove(auto_array[1]);
         main_panel.remove(button_array[0]);
@@ -764,56 +833,16 @@ public class TopLevelRewrite {
         RefreshWindow();
     }
 
-    public void StatPlayerPickPage() {
-        ClearWindow();
-        main_panel.setLayout(new GridBagLayout());
-        checkbox_array = new JCheckBox[6];
-        label_array = new JLabel[2];
-        button_array = new JButton[1];
-        GridBagConstraints c;
-        Insets d_inset = new Insets(5, 10, 5, 10);
-
-        label_array[0] = new JLabel("Solo Player Stats");
-        label_array[1] = new JLabel("Select up to 3 stats to display:");
-
-        checkbox_array[0] = new JCheckBox("CS/Min");
-        checkbox_array[1] = new JCheckBox("KDA");
-        checkbox_array[2] = new JCheckBox("Lane Win Rate");
-        checkbox_array[3] = new JCheckBox("CS/D at 15");
-        checkbox_array[4] = new JCheckBox("Lane Extension");
-        checkbox_array[5] = new JCheckBox("Jungle Proximity");
-
-        button_array[0] = new JButton("Create Stat Window");
-        button_array[0].setActionCommand("player_submit");
-        button_array[0].addActionListener(handler);
-
-        c = CNC(0, 0, 2, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.CENTER,
-                d_inset);
-
-        main_panel.add(label_array[0], c);
-        c = CNC(0, 1, 2,1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.CENTER,
-                d_inset);
-        main_panel.add(label_array[1], c);
-
-        c = CNC(0, 2, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
-                d_inset);
-        main_panel.add(checkbox_array[0], c);
-        c.gridy++;
-        main_panel.add(checkbox_array[1], c);
-        c.gridy++;
-        main_panel.add(checkbox_array[2], c);
-
-        c = CNC(1, 2, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST, d_inset);
-        main_panel.add(checkbox_array[3], c);
-        c.gridy++;
-        main_panel.add(checkbox_array[4], c);
-        c.gridy++;
-        main_panel.add(checkbox_array[5], c);
-
-        c.gridy++;
-        c.anchor = GridBagConstraints.CENTER;
-        main_panel.add(button_array[0], c);
-        RefreshWindow();
+    private String GetAPIKey() {
+        //Pulls the API key for Riot's API from a .txt file. Not stored in-source for ease of updating.
+        String temp = null;
+        try {
+            BufferedReader APIReader = new BufferedReader(new FileReader(".\\data\\static\\api.txt"));
+            temp = APIReader.readLine();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return temp;
     }
 
     //TODO Display Info

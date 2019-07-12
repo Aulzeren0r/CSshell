@@ -2,8 +2,23 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 public class ItemListenerEXT implements ItemListener {
+    /*Custom item listener. Used exclusively for role selection in NewTeamPageTwo. Role storage is handled using binary,
+     * with each role being a value of 2^x, where x is between 0 and 4. This makes player data storage somewhat more
+     * compact, and slightly harder to alter manually.
+     */
     TopLevelRewrite window;
     public void itemStateChanged(ItemEvent e) {
+        /* Determines which checkbox changed (i.e. what row and which role). Then, updates the role value of the given
+         * player based on the role's assigned value. For both Active Role and Roles Available, the following are the
+         * assignments:
+         * Top: 1
+         * Jungle: 2
+         * Mid: 4
+         * Bot: 8
+         * Support: 16
+         * This function also adjusts the dropdown menus for active role selection to include or disinclude the role
+         * whose state was changed.
+         */
         Object source = e.getItemSelectable();
         int checkbox_num = -1;
         int role_num = -1;
@@ -92,6 +107,7 @@ public class ItemListenerEXT implements ItemListener {
 
     }
     public ItemListenerEXT(TopLevelRewrite focus_window){
+        //Init. ItemListenerEXT is passed TLR.
         window = focus_window;
     }
 }

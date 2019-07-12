@@ -3,6 +3,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ChampList {
+    /* A static class composed of an array of current champions in LoL. Main2() is an alternative function to be run
+     * if the directory does not yet contain a champ_data.txt, and will initialize it with all data equal to 0.
+     */
     public static final String[] champ_names = {
         "Aatrox",
                 "Ahri",
@@ -91,6 +94,7 @@ public class ChampList {
                 "Pantheon",
                 "Poppy",
                 "Pyke",
+                "Qiyana",
                 "Quinn",
                 "Rakan",
                 "Rammus",
@@ -151,23 +155,19 @@ public class ChampList {
     };
 
     public static void main2(String[] args) throws IOException {
+        //Courtesy function for testing. Builds champ_data.txt, or resets to 0 if already exists.
         BufferedWriter temp = new BufferedWriter(new FileWriter(".\\data\\champ_data.dat"));
         for(int i = 0; i < champ_names.length; i++){
             temp.write(champ_names[i]);
             temp.write("\n");
-            temp.write("0 0 0 0 0");
+            temp.write("0-0");
             temp.write("\n");
-            temp.write("0 0 0 0 0");
+            temp.write("0-0-0");
+            temp.write("\n");
+            temp.write("0.0");
             temp.write("\n");
         }
         temp.close();
     }
 
-    private static String MakeSafe(String start){
-        start = start.replace(" ", "_");
-        start = start.replace("'", "_");
-        start = start.replace(".", "");
-        start = start.toLowerCase();
-        return start;
-    }
 }

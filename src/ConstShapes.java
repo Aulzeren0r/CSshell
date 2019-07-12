@@ -5,6 +5,7 @@
 import java.awt.geom.Path2D;
 
 public class ConstShapes {
+    //WIP. Geometry constants for DisplayWindow via DrawData. May be deprecated entirely after art assets introduced.
     static Path2D.Float champ_sel_trap;
     static Path2D.Float champ_sel_frame;
 

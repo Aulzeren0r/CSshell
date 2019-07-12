@@ -16,6 +16,7 @@ import java.util.Collection;
  */
 
 public class StringSearchable implements Searchable<String,String>{
+    //Borrowed class.
 
 
 

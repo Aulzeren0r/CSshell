@@ -3,15 +3,12 @@
  */
 
 public class CHAMP_STATICS {
+    /* CURRENTLY UNDER RENOVATION.
+     * A static class used to hold the crop details of the champion portraits pulled from DDragon for champion
+     * select. When possible, the full image will be used instead, but this is not an option due to how DisplayWindow
+     * is built.
+     */
     static private final Integer[][] crop_loc = {
-    {525, 68, 300, 185, 0},
-    {525, 48, 300, 185, 1},
-    {608, 53, 300, 185, 0},
-    {391, 194, 300, 185, 1},
-    {317, 36, 300, 185, 1},
-    {313, 107, 300, 185, 1},
-    {579, 78, 300, 185, 1},
-    {1029, 132, 300, 185, 1}, //ashe
     };
 
     public static Integer[] get_crop (int index) {

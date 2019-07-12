@@ -1,4 +1,5 @@
 public class Team {
+    //Team variable class. Under construction pending Riot API upgrade.
     Player roster[];
     String team_name;
     String team_abbr;
@@ -6,6 +7,24 @@ public class Team {
     int wins;
     int losses;
 
+    //TODO Team Stats
+    /* Wins
+     * Losses
+     * Team KDA
+     * Team Gold
+     * Baron Kills
+     * Inhib Kills
+     * Tower Kills
+     * Dragon Kills
+     * Herald Kills
+     * First Dragon Rate
+     * Enemy Baron Kills
+     * Enemy Dragon Kills
+     * Enemy Herald Kills
+     *
+     */
+
+    //Public-facing assignment functions.
     public void AddWin(){
         wins = wins + 1;
     }
@@ -15,6 +34,7 @@ public class Team {
     }
 
     public Team(Player[] pushed_roster, String new_name, String new_abbr, int win, int loss){
+        //Init. Mostly straightforward.
         wins = win;
         losses = loss;
         team_abbr = new_abbr;
@@ -25,6 +45,17 @@ public class Team {
     }
 
     public String[] Stringify(){
+        /* Turns a Team variable into an array of strings for data storage in the configuration as follows:
+         * Team name
+         * Team abbr
+         * win-loss
+         * (Repeating)
+         * (Player) First "Handle" Last
+         * headshot_loc
+         * roles active_role
+         * (End Repeat)
+         * ---
+         */
         String[] return_array = new String[5 + (5 * this.roster.length)];
         return_array[0] = this.team_name;
         return_array[1] = this.team_abbr;
@@ -46,6 +77,7 @@ public class Team {
     }
 
     public static Team Destringify(String[] raw_data){
+        //Takes an array of strings and turns it into a Team variable.
         Team temp_team = new Team(new Player[0], "", "", 0, 0);
         temp_team.team_name = raw_data[0];
         temp_team.team_abbr = raw_data[1];

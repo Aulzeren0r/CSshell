@@ -11,14 +11,20 @@ import java.io.File;
 import java.io.IOException;
 
 public class DrawData {
+    /* WIP. DrawData handles graphic creation for the image displayed in DisplayWindow. However, due to the current
+     * in-progress switch from client-side images to DDragon-pulled images, DrawData is non-functional.
+     */
     private DataHandler data_loc;
 
     public DrawData(DataHandler data){
         data_loc = data;
     }
 
+    //FIXME Rewrite this
     public BufferedImage FetchCroppedPortrait(Champ sel_champ, int side){
-        BufferedImage temp = null;
+        //Currently Nonfunctional. Will retrieve the image of a given champ and crop it based on data from CHAMP_STATICS.
+
+        /*BufferedImage temp = null;
         try{
             temp = ImageIO.read(new File(sel_champ.loc));
         } catch(IOException e){
@@ -41,15 +47,19 @@ public class DrawData {
             default:
                 break;
         }
-        return temp;
+        return temp;*/
+        return null;
     }
 
     public BufferedImage BuildGreenScreen(PlacedImage[] image_array){
+        //Public-facing version. Will use PlacedImages(encoded with location data) to build the screen for DisplayWindow.
+
         BufferedImage temp = BuildGreenScreen();
         return temp;
     }
 
     private BufferedImage BuildGreenScreen() {
+        //Internal version. Currently returns an empty green box, pending updates to DrawData.
         BufferedImage temp = new BufferedImage(650, 650, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d_temp = temp.createGraphics();
         g2d_temp.setColor(new Color(0x3EF25F));
@@ -59,6 +69,7 @@ public class DrawData {
     }
 
     private Integer[] FetchChampCrop(String name){
+        //Internal function to fetch crop data from CHAMP_STATICS.
         int i = 0;
         while(!name.equals(data_loc.champ_array[i].name)){
             i++;
@@ -69,6 +80,7 @@ public class DrawData {
 
     private static BufferedImage Resize(BufferedImage i, int scaledWidth, int scaledHeight)
             throws IOException {
+        //Borrowed function. Resizes an image based on new coordinate measurements.
         // reads input image
 
         // creates output image
@@ -84,6 +96,7 @@ public class DrawData {
     }
 
     private static BufferedImage FlipHoriz(BufferedImage i){
+        //Borrowed program. Flips an image across the vertical axis.
         AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
         tx.translate(-i.getWidth(null), 0);
         AffineTransformOp op = new AffineTransformOp(tx,

@@ -3,12 +3,15 @@
  */
 
 public class TimerThread implements Runnable {
+    //Helper thread. Keeps time away from other program cycles in order to preserve a modicum of accuracy.
     private boolean exit;
     private boolean trigger;
     private int timer_length;
     private DisplayWindow target;
     private Thread t;
+
     public TimerThread(int time, DisplayWindow target_wind){
+        //Init.
         exit = false;
         target = target_wind;
         timer_length = time;
@@ -35,6 +38,7 @@ public class TimerThread implements Runnable {
         target.SetTimer(count);
     }
 
+    //Public-facing stop and start functions.
     public void Stop(){
         exit = true;
     }

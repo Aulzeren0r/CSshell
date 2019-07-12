@@ -3,8 +3,14 @@ import java.awt.event.WindowEvent;
 import java.lang.Math;
 
 public class PullData {
+    /* Data handler class which functions as an interface between ExtendedListener and TLR. This class is built around
+     * pulling data from the various blocks of user input available in the interfaces of TLR, and passing it to both
+     * TLR and ExtendedListener.
+     */
     TopLevelRewrite window;
     public Team PullPageOne(){
+        //Pulls data from NewTeamPageOne() in TLR. Also does some error checking, which it passes to ExtendedListener via error_flag.
+
         Team temp_team;
         String team_name = window.text_field_array[0].getText();
         String team_abbr = null;
@@ -25,6 +31,7 @@ public class PullData {
     }
 
     public Player[] CreateNewRoster(String team_abbr){
+        //Creates a new roster(player array) for a team based on data pulled from NewTeamPageOne().
         String[] first_names;
         String[] handles;
         String[] last_names;
@@ -58,6 +65,7 @@ public class PullData {
     }
 
     public void PushPageOneData(){
+        //Pushes already-existing data into the boxes of NewTeamPageOne() if editing an existing team.
         window.text_field_array[0].setText(window.active_edit_team.team_name);
         window.text_field_array[1].setText(window.active_edit_team.team_abbr);
         for(int i = 0; i < window.active_edit_team.roster.length; i++){
@@ -68,6 +76,8 @@ public class PullData {
     }
 
     public void PushPageTwoData(){
+        //Pushes data for NewTeamPageTwo(). Same as above, more complicated math to parse role/active role info.
+        //loading_flag keeps ItemListenerEXT from doing weird things and making role values wayyy out of scope.
         window.loading_flag = 1;
         for(int i = 0; i < window.active_edit_team.roster.length && i < 7; i++){
             int roles = window.active_edit_team.roster[i].roles;
@@ -109,6 +119,7 @@ public class PullData {
         window.loading_flag = 0;
     }
     public void PullTeamNameAbbr(){
+        //Currently deprecated.
         window.active_edit_team.team_name = window.text_field_array[0].getText();
         if(window.text_field_array[1].getText().length() < 4){
 
@@ -116,10 +127,12 @@ public class PullData {
     }
 
     public PullData(TopLevelRewrite passed_window){
+        //Init.
         window = passed_window;
     }
 
     private String[] PullFirsts(int count){
+        //Internal function. Pulls first names from NewTeamPageOne().
         String[] first_names = null;
         if(count == 7){
             first_names = new String[7];
@@ -151,6 +164,7 @@ public class PullData {
         return first_names;
     }
     private String[] PullHandles(int count){
+        //Internal function. Pulls handles from NewTeamPageOne().
         String[] handles = null;
         if(count == 7){
             handles = new String[7];
@@ -182,7 +196,9 @@ public class PullData {
         }
         return handles;
     }
+
     private String[] PullLasts(int count){
+        //Third verse, same as the first. Pulls last names from NewTeamPageOne().
         String[] last_names = null;
         if(count == 7){
             last_names = new String[7];
@@ -214,6 +230,10 @@ public class PullData {
     }
 
     public int PullActiveRoles(){
+        /*Pulls selected active roles from the drop-down menus on NewTeamPageTwo() and encodes their values. Also
+         * does error-checking to ensure that one and only one player is in each of the 5 roles.
+         * SHOULD NEVER RETURN -5.
+         */
         int top_flag = 0;
         int jung_flag = 0;
         int mid_flag = 0;
