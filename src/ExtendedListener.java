@@ -194,6 +194,20 @@ public class ExtendedListener implements ActionListener {
             //Output: DisplayWindow, Ln 47
             main_window.screen.SetVis();
         }
+        else if(e.getActionCommand().equals("api_key_input")){
+            //Origin: TopLevelRewrite, Ln 197
+            //Output: TopLevelRewrite, Ln 854
+            main_window.APIKeyInput();
+        }
+        else if(e.getActionCommand().equals("api_key_submit")){
+            //Origin: TopLevelRewrite, Ln 862
+            //Output: RiotAPICall, Ln 71
+            //        TopLevelRewrite, Ln 110
+            String temp = main_window.text_field_array[0].getText();
+            RiotAPICall.UpdateAPIKey(temp);
+            JOptionPane.showMessageDialog(main_window.main_frame, "New API Key submitted.");
+            main_window.PopulateLander();
+        }
 
     }
 

@@ -1,11 +1,8 @@
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.List;
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -43,6 +40,7 @@ public class TopLevelRewrite {
     StringSearchable s;
     DisplayWindow screen;
     StatsInterface si;
+    static CustomSplash splash;
     int page_flag;
     int loading_flag;
     int champ_sel_flag;
@@ -84,11 +82,15 @@ public class TopLevelRewrite {
          * other subroutines to pull saved data and clean out memory (technically unnecessary, but a habit from
          * writing in C). As with classes, the subroutines will be explained at their declaration.
          */
+        splash = new CustomSplash();
+        splash.ShowSplash();
         RiotAPICall.GetCurrentVersion();
         TopLevelRewrite new_window = new TopLevelRewrite();
         new_window.io = new IO(new_window);
         new_window.data = new DataHandler(new_window);
+        splash.ChangeText("Reading Team Data");
         new_window.RunStartUp();
+        splash.ChangeText("Building Components");
         new_window.handler = new ExtendedListener(new_window);
         new_window.item_handler = new ItemListenerEXT(new_window);
         new_window.champ_handler = new ChampSelectListener(new_window);
@@ -99,6 +101,7 @@ public class TopLevelRewrite {
         new_window.si = new StatsInterface(new_window.screen);
         new_window.InitMenus();
         new_window.PopulateLander();
+        splash.EndSplash();
         javax.swing.SwingUtilities.invokeLater(new Runnable(){
             public void run(){
                 new_window.StartWindow();
@@ -191,6 +194,12 @@ public class TopLevelRewrite {
         temp_menu = new JMenu("Stats Window");
 
         build_bar.add(temp_menu);
+
+        temp_item = new JMenuItem("API Key");
+        temp_item.addActionListener(handler);
+        temp_item.setActionCommand("api_key_input");
+        build_bar.add(temp_item);
+
         main_frame.setJMenuBar(build_bar);
     }
 
@@ -518,6 +527,9 @@ public class TopLevelRewrite {
          * All data is stored in (root)/data, as .txt files.
          */
         for(int i = 0; i < data.team_array.length; i++){
+            for(int j = 0; j < data.team_array[i].roster.length; j++){
+                io.WritePlayerData(data.team_array[i].team_abbr, data.team_array[i].roster[j]);
+            }
             String[] temp = data.team_array[i].Stringify();
             try {
                 io.PushStrings(temp, IO.TEAM);
@@ -550,6 +562,7 @@ public class TopLevelRewrite {
          */
         try {
             io.ReadTeamData();
+            splash.ChangeText("Reading Champion Data");
             io.ReadChampData();
         } catch (IOException e) {
             e.printStackTrace();
@@ -837,12 +850,44 @@ public class TopLevelRewrite {
         //Pulls the API key for Riot's API from a .txt file. Not stored in-source for ease of updating.
         String temp = null;
         try {
-            BufferedReader APIReader = new BufferedReader(new FileReader(".\\data\\static\\api.txt"));
+            BufferedReader APIReader = new BufferedReader(new FileReader(".\\data\\static\\api_key.txt"));
             temp = APIReader.readLine();
         } catch (IOException e){
             e.printStackTrace();
         }
+        if(temp == null){
+            JOptionPane.showMessageDialog(null, "API Key not found or unreadable. Please use the API Key option to input a key before using data retrieval.");
+        }
         return temp;
+    }
+
+    public void APIKeyInput(){
+        ClearWindow();
+        label_array = new JLabel[3];
+        button_array = new JButton[1];
+        text_field_array = new JTextField[1];
+        label_array[0] = new JLabel("The current API key is:");
+        label_array[1] = new JLabel(RiotAPICall.api_key);
+        label_array[2] = new JLabel("Enter the new API key below:");
+        button_array[0] = new JButton("Set API Key");
+        button_array[0].addActionListener(handler);
+        button_array[0].setActionCommand("api_key_submit");
+        text_field_array[0] = new JTextField(25);
+
+        GridBagConstraints c;
+
+        c = CNC(0, 0, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.CENTER,
+                new Insets(5, 5,5, 5));
+        main_panel.add(label_array[0], c);
+        c.gridy ++;
+        main_panel.add(label_array[1], c);
+        c.gridy ++;
+        main_panel.add(label_array[2], c);
+        c.gridy ++;
+        main_panel.add(text_field_array[0], c);
+        c.gridy ++;
+        main_panel.add(button_array[0], c);
+        RefreshWindow();
     }
 
     //TODO Display Info

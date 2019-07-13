@@ -1,8 +1,7 @@
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -67,5 +66,18 @@ public class RiotAPICall {
         }
         JSONObject temp = new JSONObject(fulltext.toString());
         return temp;
+    }
+
+    public static void UpdateAPIKey(String new_key){
+        try {
+            BufferedWriter api_txt = new BufferedWriter(new FileWriter(".\\data\\static\\api_key.txt"));
+            api_txt.write(new_key);
+            api_txt.write("\n");
+            api_txt.close();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        api_key = new_key;
     }
 }

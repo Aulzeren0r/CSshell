@@ -157,6 +157,7 @@ public class ChampList {
     public static void main2(String[] args) throws IOException {
         //Courtesy function for testing. Builds champ_data.txt, or resets to 0 if already exists.
         BufferedWriter temp = new BufferedWriter(new FileWriter(".\\data\\champ_data.dat"));
+        temp.write("0\n");
         for(int i = 0; i < champ_names.length; i++){
             temp.write(champ_names[i]);
             temp.write("\n");
