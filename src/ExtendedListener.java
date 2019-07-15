@@ -107,6 +107,18 @@ public class ExtendedListener implements ActionListener {
             main_window.page_flag ++;
             main_window.UpdateTeam();
         }
+        else if(e.getActionCommand().equals("delete_back_page")){
+            //Origin: TopLevelRewrite, Ln 338
+            //Output: TopLevelRewrite, Ln 299
+            main_window.page_flag --;
+            main_window.DeleteTeam();
+        }
+        else if(e.getActionCommand().equals("delete_next_page")){
+            //Origin: TopLevelRewrite, Ln 348
+            //Output: TopLevelRewrite, Ln 299
+            main_window.page_flag ++;
+            main_window.DeleteTeam();
+        }
         else if(e.getActionCommand().equals("push_team_update")){
             //Origin: TopLevelRewrite, Ln 327 (10 Objects)
             Object command_dist = e.getSource();
@@ -205,8 +217,50 @@ public class ExtendedListener implements ActionListener {
             //        TopLevelRewrite, Ln 110
             String temp = main_window.text_field_array[0].getText();
             RiotAPICall.UpdateAPIKey(temp);
-            JOptionPane.showMessageDialog(main_window.main_frame, "New API Key submitted.");
+            JOptionPane.showMessageDialog(main_window.main_frame, "New API Key set.");
             main_window.PopulateLander();
+        }
+        else if(e.getActionCommand().equals("stats_team")){
+            main_window.page_flag = 0;
+            main_window.TeamStatsSelect();
+        }
+        else if(e.getActionCommand().equals("stats_back_page")){
+            //Origin: TopLevelRewrite, Ln 338
+            //Output: TopLevelRewrite, Ln 299
+            main_window.page_flag --;
+            main_window.TeamStatsSelect();
+        }
+        else if(e.getActionCommand().equals("stats_next_page")){
+            //Origin: TopLevelRewrite, Ln 348
+            //Output: TopLevelRewrite, Ln 299
+            main_window.page_flag ++;
+            main_window.TeamStatsSelect();
+        }
+        else if(e.getActionCommand().equals("push_team_stats")){
+            //Origin: TopLevelRewrite, Ln 374 (10 Objects)
+            Object command_dist = e.getSource();
+
+            int button_no = 0;
+            while(!(main_window.button_array[button_no].equals(command_dist))){
+                button_no ++;
+            }
+
+            //Output: DataHandler, Ln 50
+            //        TopLevelRewrite, Ln 358
+            main_window.active_edit_team = main_window.data.team_array[(main_window.page_flag * 10) + button_no];
+            main_window.DisplayTeamStats(main_window.active_edit_team);
+        }
+        else if(e.getActionCommand().equals("select_player_stat")){
+            JComboBox box = (JComboBox) e.getSource();
+            String chosen = (String) box.getSelectedItem();
+            for(int i = 0; i < main_window.active_edit_team.roster.length; i++){
+                if(chosen.equals(main_window.active_edit_team.roster[i].handle)){
+                    main_window.DisplayPlayerStats(main_window.active_edit_team.roster[i]);
+                }
+            }
+        }
+        else if(e.getActionCommand().equals("stat_player_return")){
+            main_window.DisplayTeamStats(main_window.active_edit_team);
         }
 
     }

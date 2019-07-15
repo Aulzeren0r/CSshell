@@ -168,6 +168,11 @@ public class TopLevelRewrite {
         temp_item.getAccessibleContext().setAccessibleDescription("Remove teams from your list of saved teams.");
         temp_menu.add(temp_item);
 
+        temp_item = new JMenuItem("View Team Stats");
+        temp_item.setActionCommand("stats_team");
+        temp_item.addActionListener(handler);
+        temp_menu.add(temp_item);
+
         build_bar.add(temp_menu);
 
         temp_menu = new JMenu("Display");
@@ -531,6 +536,7 @@ public class TopLevelRewrite {
                 io.WritePlayerData(data.team_array[i].team_abbr, data.team_array[i].roster[j]);
             }
             String[] temp = data.team_array[i].Stringify();
+            io.WriteTeamStatData(data.team_array[i].StringifyStats(), data.team_array[i].team_abbr);
             try {
                 io.PushStrings(temp, IO.TEAM);
             } catch (IOException e) {
@@ -887,6 +893,199 @@ public class TopLevelRewrite {
         main_panel.add(text_field_array[0], c);
         c.gridy ++;
         main_panel.add(button_array[0], c);
+        RefreshWindow();
+    }
+
+    public void TeamStatsSelect(){
+        ClearWindow();
+        Insets default_inset = new Insets(5, 10, 5, 10);
+        main_panel.setLayout(new GridBagLayout());
+        label_array = new JLabel[11];
+        button_array = new JButton[12];
+        int team_count = 0;
+        GridBagConstraints c;
+        label_array[0] = new JLabel("Select a team to view:");
+        c = CNC(0, 0, 3, 1, GridBagConstraints.NONE, 50, 10,
+                GridBagConstraints.CENTER, default_inset);
+        main_panel.add(label_array[0], c);
+        while(team_count < 10 && (team_count + (10 * page_flag)) < data.team_array.length){
+            label_array[team_count + 1] = new JLabel(data.team_array[team_count + (10 * page_flag)].team_name);
+            button_array[team_count] = new JButton("Select Team");
+            button_array[team_count].addActionListener(handler);
+            button_array[team_count].setActionCommand("push_team_stats");
+            c = CNC(0, 1 + team_count, 2, 1, GridBagConstraints.NONE, 25, 10,
+                    GridBagConstraints.CENTER, default_inset);
+            main_panel.add(label_array[team_count + 1], c);
+            c.gridx = 2;
+            c.gridwidth = 1;
+            c.ipady = 5;
+            main_panel.add(button_array[team_count], c);
+            team_count ++;
+        }
+        if(page_flag > 0){
+            button_array[10] = new JButton("Previous Page");
+            button_array[10].addActionListener(handler);
+            button_array[10].setActionCommand("stats_back_page");
+            button_array[10].setMnemonic(KeyEvent.VK_P);
+
+            c = CNC(0, 12, 1, 1, GridBagConstraints.NONE, 10, 10,
+                    GridBagConstraints.CENTER, default_inset);
+            main_panel.add(button_array[10], c);
+        }
+        if((team_count + (10 * page_flag)) < data.team_array.length){
+            button_array[11] = new JButton("Next Page");
+            button_array[11].addActionListener(handler);
+            button_array[11].setActionCommand("stats_next_page");
+            button_array[11].setMnemonic(KeyEvent.VK_N);
+
+            c = CNC(2, 12, 1, 1, GridBagConstraints.NONE, 10, 10,
+                    GridBagConstraints.CENTER, default_inset);
+            main_panel.add(button_array[11], c);
+        }
+        RefreshWindow();
+    }
+
+    public void DisplayTeamStats(Team t){
+        ClearWindow();
+        Insets default_insets = new Insets(5,5,5,5);
+        label_array = new JLabel[15];
+        combo_array = new JComboBox[1];
+        label_array[0] = new JLabel("Stats for " + t.team_name + ":");
+        label_array[1] = new JLabel("Wins: " + t.GetWins());
+        label_array[2] = new JLabel("Losses: " + t.GetLosses());
+        if(t.GetKDA() != -1) {
+            label_array[3] = new JLabel("Team KDA: " + t.GetKDA());
+        }
+        else{
+            label_array[3] = new JLabel("Team KDA: Perfect");
+        }
+        label_array[4] = new JLabel("Team Gold Per Game: " + t.GetGold());
+        label_array[5] = new JLabel("Team Inhibs Per Game: " + t.GetInhibs());
+        label_array[6] = new JLabel("Team Towers Per Game: " + t.GetTowers());
+        label_array[7] = new JLabel("Barons Per Game: " + t.GetBarons());
+        label_array[8] = new JLabel("Dragons Per Game: " + t.GetDrags());
+        label_array[9] = new JLabel("Heralds Taken: " + t.GetHerald());
+        label_array[10] = new JLabel("First Dragon Rate: " + t.GetFDRate());
+        label_array[11] = new JLabel("Enemy Barons Per Game: " + t.GetEnemyBarons());
+        label_array[12] = new JLabel("Enemy Dragons Per Game: " + t.GetEnemyDrags());
+        label_array[13] = new JLabel("Enemy Heralds Taken: " + t.GetEnemyHeralds());
+        label_array[14] = new JLabel("Select a player to view individual stats:");
+
+        combo_array[0] = new JComboBox();
+        for(int i = 0; i < t.roster.length; i++){
+            combo_array[0].addItem(t.roster[i].handle);
+        }
+        combo_array[0].addActionListener(handler);
+        combo_array[0].setActionCommand("select_player_stat");
+
+        GridBagConstraints c = CNC(0, 0, 4, 1, GridBagConstraints.NONE, 5, 5,
+                GridBagConstraints.CENTER, default_insets);
+        main_panel.add(label_array[0], c);
+
+        c = CNC(0, 1, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
+                default_insets);
+        main_panel.add(label_array[1], c);
+        c.gridx ++;
+        main_panel.add(label_array[2], c);
+        c.gridx ++;
+        main_panel.add(label_array[3], c);
+
+        c = CNC(0, 2, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
+                default_insets);
+        main_panel.add(label_array[4], c);
+        c.gridx ++;
+        main_panel.add(label_array[5], c);
+        c.gridx ++;
+        main_panel.add(label_array[6], c);
+
+        c = CNC(0, 3, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
+                default_insets);
+        main_panel.add(label_array[7], c);
+        c.gridx ++;
+        main_panel.add(label_array[8], c);
+        c.gridx ++;
+        main_panel.add(label_array[9], c);
+
+        c = CNC(0, 4, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
+                default_insets);
+        main_panel.add(label_array[11], c);
+        c.gridx ++;
+        main_panel.add(label_array[12], c);
+        c.gridx ++;
+        main_panel.add(label_array[13], c);
+
+        c = CNC(1, 5, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
+                default_insets);
+        main_panel.add(label_array[10], c);
+
+        c = CNC(0, 6, 2, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.CENTER,
+                default_insets);
+        main_panel.add(label_array[14], c);
+        c.gridwidth = 1;
+        c.gridx = 2;
+        main_panel.add(combo_array[0], c);
+
+        RefreshWindow();
+    }
+
+    public void DisplayPlayerStats(Player p){
+        ClearWindow();
+        Insets default_inset = new Insets(5,5,5,5);
+        label_array = new JLabel[10];
+        button_array = new JButton[1];
+
+        label_array[0] = new JLabel("Stats for " + p.first_name + " \"" + p.handle + "\" " + p.last_name + ":");
+        label_array[1] = new JLabel("Wins: " + p.win);
+        label_array[2] = new JLabel("Losses: " + p.loss);
+        if(p.GetKDA() != -1) {
+            label_array[3] = new JLabel("KDA: " + p.GetKDA());
+        }
+        else{
+            label_array[3] = new JLabel("KDA: Perfect");
+        }
+        label_array[4] = new JLabel("CSD @ 10 Min: " + p.CSD10);
+        label_array[5] = new JLabel("CS/Min: " + p.CSmin);
+        label_array[6] = new JLabel("Vision Score: " + p.vis);
+        label_array[7] = new JLabel("Neutral Monsters Killed: " + p.neutrals);
+        label_array[8] = new JLabel("Enemy Neutrals Killed: " + p.neutral_enemy);
+        label_array[9] = new JLabel("Gold Per Game: " + p.gold);
+
+        button_array[0] = new JButton("Return to Team Stats");
+        button_array[0].addActionListener(handler);
+        button_array[0].setActionCommand("stat_player_return");
+
+        GridBagConstraints c = CNC(0, 0, 3, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.CENTER,
+               default_inset);
+        main_panel.add(label_array[0], c);
+
+        c = CNC(0, 1, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
+                default_inset);
+        main_panel.add(label_array[1], c);
+        c.gridx++;
+        main_panel.add(label_array[2], c);
+        c.gridx++;
+        main_panel.add(label_array[3], c);
+
+        c = CNC(0, 2, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
+                default_inset);
+        main_panel.add(label_array[4], c);
+        c.gridx ++;
+        main_panel.add(label_array[5], c);
+        c.gridx ++;
+        main_panel.add(label_array[6], c);
+
+        c = CNC(0, 3, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.WEST,
+                default_inset);
+        main_panel.add(label_array[7], c);
+        c.gridx++;
+        main_panel.add(label_array[8], c);
+        c.gridx ++;
+        main_panel.add(label_array[9], c);
+
+        c = CNC(0, 4, 1, 1, GridBagConstraints.NONE, 5, 5, GridBagConstraints.EAST,
+                default_inset);
+        main_panel.add(button_array[0], c);
+
         RefreshWindow();
     }
 

@@ -19,17 +19,6 @@ public class Player {
    double neutral_enemy;
    double gold;
 
-   //TODO Player Stats
-   /* Kills
-    * Deaths
-    * Assists
-    * CS/D @ 10
-    * CS/min
-    * Vision Score
-    * Neutral Minions
-    * Neutral Minions - Enemy
-    * Gold Earned
-    */
 
    //Fairly self-explanatory outward-facing assignment functions.
    public void setActiveRole(int role_selected){
@@ -175,5 +164,14 @@ public class Player {
        temp[3] = neutrals + "~" + neutral_enemy;
        temp[4] = gold + "~" + vis;
        return temp;
+    }
+
+    public double GetKDA(){
+       double ka = kills + assists;
+       double kda = ka / deaths;
+       if(Double.isNaN(kda)){
+           return -1;
+       }
+       return kda;
     }
 }

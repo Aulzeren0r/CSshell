@@ -37,14 +37,11 @@ public class Champ {
     }
 
     public double GetKDA(){
-        /* Function for a champ which determines their average KDA base upon the number of games in which they have
-         * appeared.
-         */
-        double games = wins + losses;
+        // Function for a champ which determines their average KDA.
         double ka = tot_kills + tot_assists;
         double d = tot_deaths;
         double kda_tot = ka/d;
-        return kda_tot/games;
+        return kda_tot;
     }
 
     public double GetWinRate(){

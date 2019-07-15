@@ -103,6 +103,7 @@ public class IO {
             for(int j= 0; j < temp_team.roster.length; j++){
                 ReadPlayerData(temp_team.team_abbr, temp_team.roster[j]);
             }
+            ReadTeamStatData(temp_team);
             window.data.AddTeam(temp_team);
             i = 0;
             array = new String[40];
@@ -267,5 +268,47 @@ public class IO {
         }
         current.SetStats(w, l, k, d, a, csd, csm, vis, neut, neut_en, g);
     }
+
+    public void ReadTeamStatData(Team t){
+        File loc = new File(".\\data\\" + t.team_abbr + "\\" + t.team_abbr + ".txt");
+        if(!loc.exists()){
+            String[] temp = new String[5];
+            temp[0] = "0-0-0";
+            temp[1] = "0.0~0.0~0.0";
+            temp[2] = "0.0~0.0~0.0";
+            temp[3] = "0";
+            temp[4] = "0.0~0.0~0.0";
+            t.DestringifyStats(temp);
+        }
+        else{
+            try {
+                BufferedReader input = new BufferedReader(new FileReader(loc));
+                String[] temp = new String[5];
+
+                for(int i = 0; i < 5; i++){
+                    temp[i] = input.readLine();
+                }
+                t.DestringifyStats(temp);
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void WriteTeamStatData(String[] stats, String abbr){
+        try {
+            BufferedWriter output = new BufferedWriter(new FileWriter(
+                    ".\\data\\" + abbr + "\\" + abbr + ".txt"));
+            for(int i = 0; i < stats.length; i++){
+                output.write(stats[i]);
+                output.write("\n");
+            }
+            output.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 }
-//Test
