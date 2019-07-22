@@ -212,39 +212,50 @@ public class Team {
         enemy_herald = Integer.parseInt(temp[2]);
     }
 
-    public void StatUpdate(boolean w, int k, int d, int a, int g, int i, int t,
-                           int b, int dr, int h, boolean fd, int eb, int ed, int eh){
-        SetKill(kills + k);
-        SetDeath(deaths + d);
-        SetAssist(assists + a);
+    public void StatUpdate(TeamDataBox td){
+        SetKill(kills + td.k);
+        SetDeath(deaths + td.d);
+        SetAssist(assists + td.a);
         double games = wins + losses;
-        double temp = gold * games;
-        temp += g;
-        SetGold(temp / (games + 1));
-        temp = inhib * games;
-        temp += i;
-        SetInhib(temp / (games + 1));
-        temp = tower * games;
-        temp += t;
-        SetInhib(temp / (games + 1));
-        temp = baron * games;
-        temp += b;
-        SetBaron(temp / (games + 1));
-        temp = dragon * games;
-        temp += dr;
-        SetDrag(temp / (games + 1));
-        SetHerald(herald + h);
+        double temp = gold;
+        temp = temp * games;
+        temp = temp + td.g;
+        temp = temp / (games + 1);
+        SetGold(temp);
+        temp = inhib;
+        temp = temp * games;
+        temp = temp + td.i;
+        temp = temp / (games + 1);
+        SetInhib(temp);
+        temp = tower;
+        temp = temp * games;
+        temp = temp + td.t;
+        temp = temp / (games + 1);
+        SetTower(temp);
+        temp = baron;
+        temp = temp * games;
+        temp = temp + td.t;
+        temp = temp / (games + 1);
+        SetBaron(temp);
+        temp = dragon;
+        temp = temp * games;
+        temp = temp + td.dr;
+        temp = temp / (games + 1);
+        SetDrag(temp);
+        SetHerald(herald + td.h);
         temp = enemy_baron * games;
-        temp += eb;
-        SetEnemyBarons(temp / (games + 1));
+        temp = temp + td.eb;
+        temp = temp / (games + 1);
+        SetEnemyBarons(temp);
         temp = enemy_drag * games;
-        temp += ed;
-        SetEnemyDrags(temp / (games + 1));
-        SetEnemyHeralds(enemy_herald + eh);
-        if(fd){
+        temp = temp + td.ed;
+        temp = temp / (games + 1);
+        SetEnemyDrags(temp);
+        SetEnemyHeralds(enemy_herald + td.eh);
+        if(td.fd){
             first_drags += 1;
         }
-        if(w){
+        if(td.w){
             AddWin();
         }
         else{

@@ -161,7 +161,7 @@ public class ChampList {
         for(int i = 0; i < champ_names.length; i++){
             temp.write(champ_names[i]);
             temp.write("\n");
-            temp.write("0-0");
+            temp.write("0-0-0");
             temp.write("\n");
             temp.write("0-0-0");
             temp.write("\n");

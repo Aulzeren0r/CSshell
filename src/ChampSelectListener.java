@@ -147,7 +147,43 @@ public class ChampSelectListener implements ActionListener {
                 default:
                     break;
             }
-
+            window.screen.t_thread.Stop();
+            TimerThread t;
+            if(window.champ_sel_flag != 19) {
+                t = new TimerThread(40, window.screen);
+            }
+            else{
+                t = new TimerThread(60, window.screen);
+                window.screen.swaps = true;
+                Thread check = new Thread(new Runnable(){
+                    public void run(){
+                        try {
+                            Thread.sleep(2000);
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        while(!window.screen.timer.equals("00")){
+                            try {
+                                Thread.sleep(500);
+                            }
+                            catch(Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                        try {
+                            Thread.sleep(750);
+                        }
+                        catch(Exception e){
+                            e.printStackTrace();
+                        }
+                        window.screen.StartLoad();
+                    }
+                });
+                check.start();
+            }
+            window.screen.SetThread(t);
+            t.Trigger();
             window.PublicRefresh();
             window.champ_sel_flag++;
         }
@@ -206,6 +242,7 @@ public class ChampSelectListener implements ActionListener {
                 window.label_array[14 + i].setText(window.data.blue_champs[i]);
                 window.label_array[19 + i].setText(window.data.red_champs[i]);
             }
+
 
         }
 

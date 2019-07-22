@@ -4,7 +4,7 @@
 
 public class TimerThread implements Runnable {
     //Helper thread. Keeps time away from other program cycles in order to preserve a modicum of accuracy.
-    private boolean exit;
+    private volatile boolean exit;
     private boolean trigger;
     private int timer_length;
     private DisplayWindow target;

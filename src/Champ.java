@@ -1,5 +1,7 @@
 import org.json.JSONObject;
 
+import javax.swing.*;
+
 public class Champ {
     /* Custom variable class for champions and their specific data. Contains the following individual data for
      * each champion:
@@ -12,7 +14,7 @@ public class Champ {
      * CS/D at 10 Minutes (Not 15 due to Riot API restrictions)
      * Also stores a static list of champion IDs, used in champion declaration to determine their ID value.
      */
-    private static JSONObject champ_ID_list;
+    public static JSONObject champ_ID_list;
     String name;
     private int wins;
     private int losses;
@@ -52,66 +54,106 @@ public class Champ {
         return ((double) wins)/games;
     }
 
-    public void SetData(int w, int l, int k, int d, int a, double c){
+    public double GetCSD(){
+        return CSDatTen;
+    }
+
+    public double GetBanRate(){
+        double ban_rate = (double) bans / (double) DataHandler.total_games;
+        return ban_rate;
+    }
+
+    public double GetPickRate(){
+        double pick_rate = (double) (wins + losses) / (double) DataHandler.total_games;
+        return pick_rate;
+    }
+
+    public double GetPresence(){
+        double presence = GetBanRate() + GetPickRate();
+        return presence;
+    }
+
+    public int GetPresenceInt(){
+        return wins + losses + bans;
+    }
+
+    public int GetWins(){
+        return wins;
+    }
+
+    public int GetPicks(){
+        return wins + losses;
+    }
+
+    public int GetBans(){
+        return bans;
+    }
+
+    public void SetData(int w, int l, int b, int k, int d, int a, double c){
         /* Secondary initialization function for a champ variable. Sets all datapoints to provided values.
          * SHOULD ONLY EVER BE CALLED FROM IO. For updates to champion stats, use InsertData().
          */
-        SetWin(w);
-        SetLoss(l);
-        SetKill(k);
-        SetDeath(d);
-        SetAssist(a);
-        SetCSD(c);
+        wins = w;
+        losses = l;
+        bans = b;
+        tot_kills = k;
+        tot_deaths = d;
+        tot_assists = a;
+        CSDatTen = c;
     }
 
     public void InsertData(boolean w, boolean l, boolean b, int k, int d, int a, double c){
         /* Function which updates champion stats based upon provided values. Should be used for any update to
          * champion statistics outside of initialization.
          */
-        AddCSD(c);
+        if(b){
+            AddBan();
+        }
         if(w){
+            AddKills(k);
+            AddDeaths(d);
+            AddAssists(a);
+            AddCSD(c);
             AddWin();
         }
         else if(l){
+            AddKills(k);
+            AddDeaths(d);
+            AddAssists(a);
+            AddCSD(c);
             AddLoss();
         }
-        else if(b){
-            AddBan();
-        }
-        AddKills(k);
-        AddDeaths(d);
-        AddAssists(a);
     }
     //The following functions are all self-explanatory wrappers.
     private void AddWin(){
-        SetWin(wins ++);
+        wins += 1;
     }
 
     private void AddLoss(){
-        SetLoss(losses ++);
+        losses += 1;
     }
 
     private void AddKills(int new_kills){
-        SetKill(tot_kills + new_kills);
+        tot_kills += new_kills;
     }
 
     private void AddBan(){
-        SetBan(bans ++);
+        bans = bans + 1;
     }
 
     private void AddDeaths(int new_deaths){
-        SetDeath(tot_deaths + new_deaths);
+        tot_deaths += new_deaths;
     }
 
     private void AddAssists(int new_assists){
-        SetAssist(tot_assists + new_assists);
+        tot_assists += new_assists;
     }
 
     private void AddCSD(double csd){
         double games = wins + losses;
         double tot_csd = (CSDatTen * games) + csd;
         double new_csd = tot_csd / (games + 1);
-        SetCSD(new_csd);
+        CSDatTen = new_csd;
     }
 
     public Champ(String new_name, String ID){
@@ -129,38 +171,10 @@ public class Champ {
          */
         String[] temp = new String[4];
         temp[0] = name;
-        temp[1] = wins + "-" + losses;
+        temp[1] = wins + "-" + losses + "-" + bans;
         temp[2] = tot_kills + "-" + tot_deaths + "-" + tot_assists;
         temp[3] = Double.toString(CSDatTen);
         return temp;
     }
 
-    //Further wrapper functions.
-    private void SetWin(int w){
-        wins = w;
-    }
-
-    private void SetLoss(int l){
-        losses = l;
-    }
-
-    private void SetBan(int b){
-        bans = b;
-    }
-
-    private void SetKill(int k){
-        tot_kills = k;
-    }
-
-    private void SetDeath(int d){
-        tot_deaths = d;
-    }
-
-    private void SetAssist(int a){
-        tot_assists = a;
-    }
-
-    private void SetCSD(double c){
-        CSDatTen = c;
-    }
 }

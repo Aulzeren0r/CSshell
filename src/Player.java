@@ -111,35 +111,35 @@ public class Player {
        SetGold(g);
    }
 
-   public void NewStats(boolean w, int k, int d, int a, int csd, double csm, int v, int n, int en_neut, int g){
+   public void NewStats(PlayerDataBox p){
        double games = win + loss;
        double temp = vis *  games;
-       temp += v;
+       temp += p.v;
        SetVision(temp /  (games + 1));
        temp = neutrals *  games;
-       temp += n;
+       temp += p.n;
        SetNeutrals( temp /  (games + 1));
        temp = neutral_enemy *  games;
-       temp += en_neut;
+       temp += p.en_neut;
        SetEnemyNeuts(temp /  (games + 1));
        temp = gold *  games;
-       temp += g;
+       temp += p.g;
        SetGold(temp /  (games + 1));
        temp = CSmin * games;
-       temp += csm;
+       temp += p.csm;
        SetCSM(temp / (games + 1));
        temp = CSD10 * games;
-       temp += csd;
+       temp += p.csd;
        SetCSD(temp / (games + 1));
-       if(w){
+       if(p.w){
            SetWins(win + 1);
        }
        else{
            SetLoss(loss + 1);
        }
-       SetKills(kills + k);
-       SetDeaths(deaths + d);
-       SetAssists(assists + a);
+       SetKills(kills + p.k);
+       SetDeaths(deaths + p.d);
+       SetAssists(assists + p.a);
    }
 
     private void InitStats(){

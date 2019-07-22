@@ -262,6 +262,36 @@ public class ExtendedListener implements ActionListener {
         else if(e.getActionCommand().equals("stat_player_return")){
             main_window.DisplayTeamStats(main_window.active_edit_team);
         }
+        else if(e.getActionCommand().equals("current_game_end")){
+            if(!main_window.screen.swaps){
+                return;
+            }
+            main_window.screen.swaps = false;
+            main_window.DataLoadingScreen();
+            Thread t = new Thread(){
+                public void run(){
+                    try {
+                        Thread.sleep(1000);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    main_window.api.PostGameHandler();
+                }
+            };
+            t.start();
+        }
+        else if(e.getActionCommand().equals("champ_stats_main")){
+            main_window.ChampStatsLander();
+        }
+        else if(e.getActionCommand().equals("champ_stats_submit")){
+            String target_champ = (String) main_window.auto_array[0].getSelectedItem();
+            Champ target = main_window.data.FindChamp(target_champ);
+            main_window.ChampStatsDisplay(target);
+        }
+        else if(e.getActionCommand().equals("champ_stats_return")){
+            main_window.ChampStatsLander();
+        }
 
     }
 

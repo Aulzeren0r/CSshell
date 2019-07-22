@@ -23,11 +23,16 @@ public class IO {
         try {
             team_buffered_old = new BufferedReader(new FileReader(".\\data\\team_data.dat"));
             team_buffered = new BufferedWriter(new FileWriter(".\\data\\team_data_temp.dat"));
+        }
+        catch(IOException e) {
+            team_buffered = new BufferedWriter(new FileWriter(".\\data\\team_data.dat"));
+            team_buffered_old = null;
+        }
+        try{
             champ_buffered_old = new BufferedReader(new FileReader(".\\data\\champ_data.dat"));
             champ_buffered = new BufferedWriter(new FileWriter(".\\data\\champ_data_temp.dat"));
         }
         catch(IOException e){
-            team_buffered = new BufferedWriter(new FileWriter(".\\data\\team_data.dat"));
             ChampList.main2(null);
             champ_buffered_old = new BufferedReader(new FileReader(".\\data\\champ_data.dat"));
             champ_buffered = new BufferedWriter(new FileWriter(".\\data\\champ_data_temp.dat"));
@@ -88,6 +93,9 @@ public class IO {
          * less than 7 players per team.
          */
         String buffer;
+        if(team_buffered_old == null){
+            return;
+        }
         buffer = team_buffered_old.readLine();
         String[] array = new String[40];
         int i = 0;
@@ -127,7 +135,7 @@ public class IO {
             window.data.total_games = Integer.parseInt(buffer);
         }
         String[] temp_string_arr;
-        int win, loss, kill, death, ass;
+        int win, loss, ban, kill, death, ass;
         double csd10;
         buffer = champ_buffered_old.readLine();
         while(buffer != null){
@@ -138,6 +146,7 @@ public class IO {
             temp_string_arr = buffer.split("-");
             win = Integer.parseInt(temp_string_arr[0]);
             loss = Integer.parseInt(temp_string_arr[1]);
+            ban = Integer.parseInt(temp_string_arr[2]);
             buffer = champ_buffered_old.readLine();
             temp_string_arr = buffer.split("-");
             kill = Integer.parseInt(temp_string_arr[0]);
@@ -145,7 +154,7 @@ public class IO {
             ass = Integer.parseInt(temp_string_arr[2]);
             buffer = champ_buffered_old.readLine();
             csd10 = Double.parseDouble(buffer);
-            temp.SetData(win, loss, kill, death, ass, csd10);
+            temp.SetData(win, loss, ban, kill, death, ass, csd10);
             temp_array[count] = temp;
             count ++;
             buffer = champ_buffered_old.readLine();

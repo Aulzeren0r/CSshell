@@ -1,3 +1,4 @@
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -46,12 +47,23 @@ public class RiotAPICall {
     private static JSONObject GenAPICall(String Url){
         //Generalized API call. Takes a given URI and returns the top-layer JSON object from that URI.
         StringBuilder fulltext = new StringBuilder();
+        BufferedWriter game_raw = null;
+        if(Url.contains("/v4/matches")){
+            String[] temp = Url.split("/");
+            temp = temp[7].split("\\?");
+            try {
+                game_raw = new BufferedWriter(new FileWriter(".\\data\\games\\" + temp[0] + ".txt"));
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
         try {
             URL site = new URL(Url);
             HttpURLConnection con = (HttpURLConnection) site.openConnection();
             con.setRequestMethod("GET");
             int responseCode = con.getResponseCode();
-            if(responseCode == 403){
+            if(responseCode == 429){
                 JOptionPane.showMessageDialog(null, "Error, API call limit overrun. THIS SHOULD NEVER HAPPEN.");
                 return null;
             }
@@ -59,13 +71,26 @@ public class RiotAPICall {
             String buffer;
             while((buffer = in.readLine()) != null){
                 fulltext.append(buffer);
+                if(game_raw != null){
+                    game_raw.write(buffer);
+                }
             }
             in.close();
+            if(game_raw != null){
+                game_raw.close();
+            }
         } catch(Exception e) {
             e.printStackTrace();
         }
         JSONObject temp = new JSONObject(fulltext.toString());
         return temp;
+    }
+
+    public static String PullSummonerID(String player_name){
+        String lead = "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/";
+        String url = lead + player_name + "?api_key=" + api_key;
+        JSONObject output = GenAPICall(url);
+        return output.getString("accountId");
     }
 
     public static void UpdateAPIKey(String new_key){
@@ -79,5 +104,15 @@ public class RiotAPICall {
             e.printStackTrace();
         }
         api_key = new_key;
+    }
+
+    public static JSONObject PullMatchData(String encrypt_id, String champ_key, long epoch_start){
+        String url = "https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/";
+        String link = url + encrypt_id + "?api_key=" + api_key + "&champion=" + champ_key + "&beginTime=" + epoch_start
+                + "&endIndex=1";
+        JSONObject matchlist = GenAPICall(link);
+        JSONArray matches = matchlist.getJSONArray("matches");
+        JSONObject match_header = matches.getJSONObject(0);
+        return match_header;
     }
 }

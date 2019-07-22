@@ -1,15 +1,10 @@
 import java.awt.*;
+import java.awt.event.*;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.List;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 /* This is the main class of the program, and the one which houses the main interface for controlling.
@@ -40,6 +35,7 @@ public class TopLevelRewrite {
     StringSearchable s;
     DisplayWindow screen;
     StatsInterface si;
+    APIData api;
     static CustomSplash splash;
     int page_flag;
     int loading_flag;
@@ -99,6 +95,7 @@ public class TopLevelRewrite {
         new_window.page_flag = 0;
         new_window.screen = new DisplayWindow(new_window, new_window.data);
         new_window.si = new StatsInterface(new_window.screen);
+        new_window.api = new APIData(new_window);
         new_window.InitMenus();
         new_window.PopulateLander();
         splash.EndSplash();
@@ -198,11 +195,42 @@ public class TopLevelRewrite {
         build_bar.add(temp_menu);
         temp_menu = new JMenu("Stats Window");
 
+        temp_item = new JMenuItem("Champion Stats");
+        temp_item.setActionCommand("champ_stats_main");
+        temp_item.addActionListener(handler);
+        temp_menu.add(temp_item);
+
         build_bar.add(temp_menu);
 
         temp_item = new JMenuItem("API Key");
         temp_item.addActionListener(handler);
         temp_item.setActionCommand("api_key_input");
+        build_bar.add(temp_item);
+
+        temp_item = new JMenuItem("End Game");
+        temp_item.addActionListener(handler);
+        temp_item.setActionCommand("current_game_end");
+        build_bar.add(temp_item);
+
+        temp_item = new JMenuItem("Test");
+        temp_item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DataLoadingScreen();
+                Thread thread = new Thread(){
+                    public void run(){
+                        try{
+                            Thread.sleep(1000);
+                        }
+                        catch(Exception e){
+                            e.printStackTrace();
+                        }
+                        api.PostGameHandler();
+                    }
+                };
+                thread.start();
+            }
+        });
         build_bar.add(temp_item);
 
         main_frame.setJMenuBar(build_bar);
@@ -424,7 +452,7 @@ public class TopLevelRewrite {
          * re-centers the interface window.
          */
         main_frame.pack();
-        main_panel.repaint();
+        main_panel.validate();
         main_frame.setLocationRelativeTo(null);
     }
 
@@ -570,6 +598,15 @@ public class TopLevelRewrite {
             io.ReadTeamData();
             splash.ChangeText("Reading Champion Data");
             io.ReadChampData();
+            splash.ChangeText("Checking For New Champs");
+            Champ temp = DataHandler.CheckChamps(data.champ_array);
+            if(temp != null){
+                int length = data.champ_array.length;
+                Champ[] temp_array = new Champ[length + 1];
+                System.arraycopy(data.champ_array, 0, temp_array, 0, data.champ_array.length);
+                temp_array[length] = temp;
+                data.champ_array = temp_array;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             io.CloseThreads();
@@ -800,7 +837,9 @@ public class TopLevelRewrite {
         main_panel.add(label_array[36], c);
         c.gridx += 5;
         main_panel.add(label_array[37], c);
-
+        TimerThread t = new TimerThread(40, screen);
+        screen.SetThread(t);
+        t.Trigger();
         RefreshWindow();
     }
 
@@ -954,20 +993,20 @@ public class TopLevelRewrite {
         label_array[1] = new JLabel("Wins: " + t.GetWins());
         label_array[2] = new JLabel("Losses: " + t.GetLosses());
         if(t.GetKDA() != -1) {
-            label_array[3] = new JLabel("Team KDA: " + t.GetKDA());
+            label_array[3] = new JLabel("Team KDA: " + String.format("%.2f", t.GetKDA()));
         }
         else{
             label_array[3] = new JLabel("Team KDA: Perfect");
         }
-        label_array[4] = new JLabel("Team Gold Per Game: " + t.GetGold());
-        label_array[5] = new JLabel("Team Inhibs Per Game: " + t.GetInhibs());
-        label_array[6] = new JLabel("Team Towers Per Game: " + t.GetTowers());
-        label_array[7] = new JLabel("Barons Per Game: " + t.GetBarons());
-        label_array[8] = new JLabel("Dragons Per Game: " + t.GetDrags());
+        label_array[4] = new JLabel("Team Gold Per Game: " + String.format("%.2f", t.GetGold()));
+        label_array[5] = new JLabel("Team Inhibs Per Game: " + String.format("%.2f", t.GetInhibs()));
+        label_array[6] = new JLabel("Team Towers Per Game: " + String.format("%.2f", t.GetTowers()));
+        label_array[7] = new JLabel("Barons Per Game: " + String.format("%.2f", t.GetBarons()));
+        label_array[8] = new JLabel("Dragons Per Game: " + String.format("%.2f", t.GetDrags()));
         label_array[9] = new JLabel("Heralds Taken: " + t.GetHerald());
-        label_array[10] = new JLabel("First Dragon Rate: " + t.GetFDRate());
-        label_array[11] = new JLabel("Enemy Barons Per Game: " + t.GetEnemyBarons());
-        label_array[12] = new JLabel("Enemy Dragons Per Game: " + t.GetEnemyDrags());
+        label_array[10] = new JLabel("First Dragon Rate: " + String.format("%.2f", t.GetFDRate()));
+        label_array[11] = new JLabel("Enemy Barons Per Game: " + String.format("%.2f", t.GetEnemyBarons()));
+        label_array[12] = new JLabel("Enemy Dragons Per Game: " + String.format("%.2f", t.GetEnemyDrags()));
         label_array[13] = new JLabel("Enemy Heralds Taken: " + t.GetEnemyHeralds());
         label_array[14] = new JLabel("Select a player to view individual stats:");
 
@@ -1038,17 +1077,17 @@ public class TopLevelRewrite {
         label_array[1] = new JLabel("Wins: " + p.win);
         label_array[2] = new JLabel("Losses: " + p.loss);
         if(p.GetKDA() != -1) {
-            label_array[3] = new JLabel("KDA: " + p.GetKDA());
+            label_array[3] = new JLabel("KDA: " + String.format("%.2f",p.GetKDA()));
         }
         else{
             label_array[3] = new JLabel("KDA: Perfect");
         }
-        label_array[4] = new JLabel("CSD @ 10 Min: " + p.CSD10);
-        label_array[5] = new JLabel("CS/Min: " + p.CSmin);
-        label_array[6] = new JLabel("Vision Score: " + p.vis);
-        label_array[7] = new JLabel("Neutral Monsters Killed: " + p.neutrals);
-        label_array[8] = new JLabel("Enemy Neutrals Killed: " + p.neutral_enemy);
-        label_array[9] = new JLabel("Gold Per Game: " + p.gold);
+        label_array[4] = new JLabel("CSD @ 10 Min: " + String.format("%.2f",p.CSD10));
+        label_array[5] = new JLabel("CS/Min: " + String.format("%.2f", p.CSmin));
+        label_array[6] = new JLabel("Vision Score: " + String.format("%.2f", p.vis));
+        label_array[7] = new JLabel("Neutral Monsters Killed: " + String.format("%.2f", p.neutrals));
+        label_array[8] = new JLabel("Enemy Neutrals Killed: " + String.format("%.2f", p.neutral_enemy));
+        label_array[9] = new JLabel("Gold Per Game: " + String.format("%.2f", p.gold));
 
         button_array[0] = new JButton("Return to Team Stats");
         button_array[0].addActionListener(handler);
@@ -1088,6 +1127,98 @@ public class TopLevelRewrite {
 
         RefreshWindow();
     }
+
+    public void DataLoadingScreen(){
+        ClearWindow();
+        label_array = new JLabel[2];
+        label_array[0] = new JLabel("Accessing Riot game data...");
+        label_array[1] = new JLabel(new ImageIcon(".\\img\\loadbar.gif"));
+        GridBagConstraints c = CNC(0,0, 1, 1, GridBagConstraints.NONE, 5, 5,
+                GridBagConstraints.CENTER, new Insets(5,5,5,5));
+        main_panel.add(label_array[0], c);
+        c.gridy ++;
+        main_panel.add(label_array[1], c);
+        RefreshWindow();
+    }
+
+    public void ChampStatsLander(){
+        ClearWindow();
+        label_array = new JLabel[1];
+        button_array = new JButton[1];
+        auto_array = new AutocompleteJComboBox[1];
+
+        List<String> champ_names = new ArrayList<String>();
+        for(int i = 0; i < data.champ_array.length; i++){
+            champ_names.add(data.champ_array[i].name);
+        }
+
+        s = new StringSearchable(champ_names);
+        auto_array[0] = new AutocompleteJComboBox(s);
+
+        label_array[0] = new JLabel("Select a champion and click \"Submit\" to view that champion's stats:");
+
+        button_array[0] = new JButton("Submit");
+        button_array[0].addActionListener(handler);
+        button_array[0].setActionCommand("champ_stats_submit");
+
+        GridBagConstraints c = CNC(0, 0, 1, 1, GridBagConstraints.NONE, 5, 5,
+                GridBagConstraints.CENTER, new Insets(5,5,5,5));
+        main_panel.add(label_array[0], c);
+        c.gridy ++;
+        main_panel.add(auto_array[0], c);
+        c.gridy ++;
+        main_panel.add(button_array[0], c);
+        RefreshWindow();
+    }
+
+    public void ChampStatsDisplay(Champ target){
+        ClearWindow();
+        Insets default_inset = new Insets(5,5,5,5);
+        label_array = new JLabel[7];
+        button_array = new JButton[1];
+
+        button_array[0] = new JButton("Return to List");
+        button_array[0].setActionCommand("champ_stats_return");
+        button_array[0].addActionListener(handler);
+
+        label_array[0] = new JLabel("Stats for " + target.name + ":");
+        label_array[1] = new JLabel("Pick Rate: " + String.format("%.2f", (100 * target.GetPickRate())) + "% (" +
+                target.GetPicks() + "/" + DataHandler.total_games + ")");
+        label_array[2] = new JLabel("Ban Rate: " + String.format("%.2f", (100 * target.GetBanRate())) + "% (" +
+                target.GetBans() + "/" + DataHandler.total_games + ")");
+        label_array[3] = new JLabel("Win Rate: " + String.format("%.2f", (100 * target.GetWinRate())) + "% (" +
+                target.GetWins() + "/" + target.GetPicks() + ")");
+        label_array[4] = new JLabel("Presence: " + String.format("%.2f", (100 * target.GetPresence())) + "% (" +
+                target.GetPresenceInt() + "/" + DataHandler.total_games + ")");
+        label_array[5] = new JLabel("Average KDA: " + String.format("%.2f", target.GetKDA()));
+        label_array[6] = new JLabel("Average CS/D @ 10: " + String.format("%.2f", target.GetCSD()));
+
+        GridBagConstraints c = CNC(0, 0, 2, 1, GridBagConstraints.NONE, 5, 5,
+                GridBagConstraints.CENTER, default_inset);
+        main_panel.add(label_array[0], c);
+
+        c = CNC(0, 1, 1, 1, GridBagConstraints.NONE, 5, 5,
+                GridBagConstraints.WEST, default_inset);
+        main_panel.add(label_array[4], c);
+        c.gridx ++;
+        main_panel.add(label_array[1], c);
+        c.gridx = 0;
+        c.gridy ++;
+        main_panel.add(label_array[2], c);
+        c.gridx ++;
+        main_panel.add(label_array[3], c);
+        c.gridx = 0;
+        c.gridy ++;
+        main_panel.add(label_array[5], c);
+        c.gridx ++;
+        main_panel.add(label_array[6], c);
+
+        c = CNC(1, 4, 1, 1, GridBagConstraints.NONE, 5, 5,
+                GridBagConstraints.EAST, default_inset);
+        main_panel.add(button_array[0], c);
+        RefreshWindow();
+    }
+
 
     //TODO Display Info
     /* Build visuals

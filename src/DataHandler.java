@@ -1,3 +1,5 @@
+import org.json.JSONObject;
+
 public class DataHandler {
     /* The major data storage class for the program. Contains a full list of current teams and champions, along with
      * all relevant data. Also stores data for the current game.
@@ -11,7 +13,7 @@ public class DataHandler {
     String[] red_champs;
     String[] red_bans;
     TopLevelRewrite window;
-    int total_games;
+    static int total_games;
     public static final int RED = 10;
     public static final int BLUE = 20;
 
@@ -98,5 +100,37 @@ public class DataHandler {
             }
         }
         return null;
+    }
+
+    public Champ FindByKey(String key){
+        for(int i = 0; i < champ_array.length; i++){
+            if(champ_array[i].champ_id.equals(key)){
+                return champ_array[i];
+            }
+        }
+        return null;
+    }
+
+    public static Champ CheckChamps(Champ[] champ_array){
+        Champ new_champ = null;
+        for(String key : Champ.champ_ID_list.keySet()){
+            int flag = 0;
+            JSONObject champion = Champ.champ_ID_list.getJSONObject(key);
+            String name = champion.getString("name");
+            if(name.equals("Nunu & Willump") || name.equals("Kha'Zix")){
+                flag = 1;
+                continue;
+            }
+            for(Champ champ : champ_array){
+                if(champ.name.equals(name)){
+                    flag = 1;
+                }
+            }
+            if(flag == 0){
+                new_champ = new Champ(name, champion.getString("key"));
+                new_champ.SetData(0,0,0, 0,0,0, 0.0);
+            }
+        }
+        return new_champ;
     }
 }

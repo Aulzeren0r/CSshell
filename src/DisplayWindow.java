@@ -22,6 +22,7 @@ public class DisplayWindow {
     BufferedImage[] image_array;
     Graphics[] graphics_array;
     TimerThread t_thread;
+    volatile boolean swaps;
 
     private static final int BLUE = 0;
     private static final int RED = 1;
@@ -86,6 +87,11 @@ public class DisplayWindow {
         }
         timer = temp;
         label_array[0].setText(timer);
+        main_frame.pack();
         main_frame.repaint();
+    }
+
+    public void StartLoad(){
+        label_array[0].setText("Loading Game...");
     }
 }
