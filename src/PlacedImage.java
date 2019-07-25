@@ -10,4 +10,9 @@ public class PlacedImage {
     int xloc;
     int yloc;
 
+    public PlacedImage(BufferedImage i, int x, int y){
+        img = i;
+        xloc = x;
+        yloc = y;
+    }
 }

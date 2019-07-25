@@ -163,63 +163,47 @@ public class IO {
         champ_buffered_old.close();
     }
 
-    private String MakeSafe(String start){
+    static String MakeSafe(String start){
         /* Edits the names of champions to the formats returned by DataDragon's JSON list. If name does not need edits,
          * it will not appear here.
          */
-        if(start.equals("Wukong")){
-            return "MonkeyKing";
-        }
-        else if(start.equals("Aurelion Sol")){
-            return "AurelionSol";
-        }
-        else if(start.equals("Cho'Gath")){
-            return "Chogath";
-        }
-        else if(start.equals("Dr. Mundo")){
-            return "DrMundo";
-        }
-        else if(start.equals("Jarvan IV")){
-            return "JarvanIV";
-        }
-        else if(start.equals("Kai'Sa")){
-            return "Kaisa";
-        }
-        else if(start.equals("Kha'zix")){
-            return "Khazix";
-        }
-        else if(start.equals("Kog'Maw")){
-            return "KogMaw";
-        }
-        else if(start.equals("LeBlanc")){
-            return "Leblanc";
-        }
-        else if(start.equals("Lee Sin")){
-            return "LeeSin";
-        }
-        else if(start.equals("Master Yi")){
-            return "MasterYi";
-        }
-        else if(start.equals("Miss Fortune")){
-            return "MissFortune";
-        }
-        else if(start.equals("Rek'Sai")){
-            return "RekSai";
-        }
-        else if(start.equals("Tahm Kench")){
-            return "TahmKench";
-        }
-        else if(start.equals("Twisted Fate")){
-            return "TwistedFate";
-        }
-        else if(start.equals("Vel'Koz")){
-            return "Velkoz";
-        }
-        else if(start.equals("Xin Zhao")){
-            return "XinZhao";
-        }
-        else {
-            return start;
+        switch (start) {
+            case "Wukong":
+                return "MonkeyKing";
+            case "Aurelion Sol":
+                return "AurelionSol";
+            case "Cho'Gath":
+                return "Chogath";
+            case "Dr. Mundo":
+                return "DrMundo";
+            case "Jarvan IV":
+                return "JarvanIV";
+            case "Kai'Sa":
+                return "Kaisa";
+            case "Kha'zix":
+                return "Khazix";
+            case "Kog'Maw":
+                return "KogMaw";
+            case "LeBlanc":
+                return "Leblanc";
+            case "Lee Sin":
+                return "LeeSin";
+            case "Master Yi":
+                return "MasterYi";
+            case "Miss Fortune":
+                return "MissFortune";
+            case "Rek'Sai":
+                return "RekSai";
+            case "Tahm Kench":
+                return "TahmKench";
+            case "Twisted Fate":
+                return "TwistedFate";
+            case "Vel'Koz":
+                return "Velkoz";
+            case "Xin Zhao":
+                return "XinZhao";
+            default:
+                return start;
         }
     }
 

@@ -16,6 +16,9 @@ public class ChampSelectListener implements ActionListener {
         if(e.getActionCommand().equals("champ_select_continue")) {
             // Action command for submitting a pick or ban. Stores the data and advances to the next selection.
             String curr_sel = null;
+            int side = 0;
+            int pick = -1;
+            int turn = 0;
             if (EditCheck()) {
                 curr_sel = (String) window.auto_array[0].getSelectedItem();
             } else {
@@ -32,30 +35,45 @@ public class ChampSelectListener implements ActionListener {
                     window.label_array[24].setText(curr_sel);
                     window.label_array[1].setText("Red 1");
                     EditFlip();
+                    side = BLUE;
+                    pick = 0;
+                    turn = 1;
                     break;
                 case 1:
                     window.data.red_bans[0] = curr_sel;
                     window.label_array[29].setText(curr_sel);
                     window.label_array[1].setText("Blue 2");
                     EditFlip();
+                    side = RED;
+                    pick = 0;
+                    turn = 1;
                     break;
                 case 2:
                     window.data.blue_bans[1] = curr_sel;
                     window.label_array[25].setText(curr_sel);
                     window.label_array[1].setText("Red 2");
                     EditFlip();
+                    side = BLUE;
+                    pick = 0;
+                    turn = 2;
                     break;
                 case 3:
                     window.data.red_bans[1] = curr_sel;
                     window.label_array[30].setText(curr_sel);
                     window.label_array[1].setText("Blue 3");
                     EditFlip();
+                    side = RED;
+                    pick = 0;
+                    turn = 2;
                     break;
                 case 4:
                     window.data.blue_bans[2] = curr_sel;
                     window.label_array[26].setText(curr_sel);
                     window.label_array[1].setText("Red 3");
                     EditFlip();
+                    side = BLUE;
+                    pick = 0;
+                    turn = 3;
                     break;
                 case 5:
                     window.data.red_bans[2] = curr_sel;
@@ -63,33 +81,51 @@ public class ChampSelectListener implements ActionListener {
                     window.label_array[0].setText("Current Pick:");
                     window.label_array[1].setText("Blue 1");
                     EditFlip();
+                    side = RED;
+                    pick = 0;
+                    turn = 3;
                     break;
                 case 6:
                     window.data.blue_champs[0] = curr_sel;
                     window.label_array[14].setText(curr_sel);
                     window.label_array[1].setText("Red 1");
                     EditFlip();
+                    pick = 1;
+                    side = BLUE;
+                    turn = 1;
                     break;
                 case 7:
                     window.data.red_champs[0] = curr_sel;
                     window.label_array[19].setText(curr_sel);
                     window.label_array[1].setText("Red 2");
+                    side = RED;
+                    pick = 1;
+                    turn = 1;
                     break;
                 case 8:
                     window.data.red_champs[1] = curr_sel;
                     window.label_array[20].setText(curr_sel);
                     window.label_array[1].setText("Blue 2");
                     EditFlip();
+                    side = RED;
+                    pick = 1;
+                    turn = 2;
                     break;
                 case 9:
                     window.data.blue_champs[1] = curr_sel;
                     window.label_array[15].setText(curr_sel);
                     window.label_array[1].setText("Blue 3");
+                    side = BLUE;
+                    pick = 1;
+                    turn = 2;
                     break;
                 case 10:
                     window.data.blue_champs[2] = curr_sel;
                     window.label_array[16].setText(curr_sel);
                     window.label_array[1].setText("Red 3");
+                    side = BLUE;
+                    pick = 1;
+                    turn = 3;
                     EditFlip();
                     break;
                 case 11:
@@ -97,11 +133,17 @@ public class ChampSelectListener implements ActionListener {
                     window.label_array[21].setText(curr_sel);
                     window.label_array[0].setText("Current Ban:");
                     window.label_array[1].setText("Red 4");
+                    side = RED;
+                    pick = 1;
+                    turn = 3;
                     break;
                 case 12:
                     window.data.red_bans[3] = curr_sel;
                     window.label_array[32].setText(curr_sel);
                     window.label_array[1].setText("Blue 4");
+                    side = RED;
+                    pick = 0;
+                    turn = 4;
                     EditFlip();
                     break;
                 case 13:
@@ -109,12 +151,18 @@ public class ChampSelectListener implements ActionListener {
                     window.label_array[27].setText(curr_sel);
                     window.label_array[1].setText("Red 5");
                     EditFlip();
+                    side = BLUE;
+                    pick = 0;
+                    turn = 4;
                     break;
                 case 14:
                     window.data.red_bans[4] = curr_sel;
                     window.label_array[33].setText(curr_sel);
                     window.label_array[1].setText("Blue 5");
                     EditFlip();
+                    side = RED;
+                    pick = 0;
+                    turn = 5;
                     break;
                 case 15:
                     window.data.blue_bans[4] = curr_sel;
@@ -122,31 +170,47 @@ public class ChampSelectListener implements ActionListener {
                     window.label_array[0].setText("Current Pick");
                     window.label_array[1].setText("Red 4");
                     EditFlip();
+                    side = BLUE;
+                    pick = 0;
+                    turn = 5;
                     break;
                 case 16:
                     window.data.red_champs[3] = curr_sel;
                     window.label_array[22].setText(curr_sel);
                     window.label_array[1].setText("Blue 4");
                     EditFlip();
+                    side = RED;
+                    pick = 1;
+                    turn = 4;
                     break;
                 case 17:
                     window.data.blue_champs[3] = curr_sel;
                     window.label_array[17].setText(curr_sel);
                     window.label_array[1].setText("Blue 5");
+                    side = BLUE;
+                    pick = 1;
+                    turn = 4;
                     break;
                 case 18:
                     window.data.blue_champs[4] = curr_sel;
                     window.label_array[18].setText(curr_sel);
                     window.label_array[1].setText("Red 5");
                     EditFlip();
+                    side = BLUE;
+                    pick = 1;
+                    turn = 5;
                     break;
                 case 19:
                     window.data.red_champs[4] = curr_sel;
                     window.label_array[23].setText(curr_sel);
                     window.ChampSelectSwaps();
+                    side = RED;
+                    pick = 1;
+                    turn = 5;
                 default:
                     break;
             }
+            window.screen.art_handler.SendSelectedChamp(side, pick, turn, curr_sel);
             window.screen.t_thread.Stop();
             TimerThread t;
             if(window.champ_sel_flag != 19) {

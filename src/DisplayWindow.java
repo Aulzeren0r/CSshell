@@ -5,8 +5,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class DisplayWindow {
     /* WIP. The main screen of the program. This window only ever contains one box, filled with an image created in
@@ -62,7 +60,7 @@ public class DisplayWindow {
     }
 
     private void LoadTestImage(){
-        //Test function. Currently unused.
+        //Test function. Currently unused except for testing between pushes.
     }
 
     public void ForceFront(){
@@ -93,5 +91,9 @@ public class DisplayWindow {
 
     public void StartLoad(){
         label_array[0].setText("Loading Game...");
+    }
+
+    public void SetVis(boolean flag){
+        main_frame.setVisible(flag);
     }
 }
